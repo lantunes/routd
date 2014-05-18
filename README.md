@@ -19,7 +19,7 @@ Or, add the following dependency to your pom.xml:
 </dependency>
 ```
 
-## Examples
+## Usage
 -----------
 
 There are two classes of interest in the Routd library: **Route** and **RouteMap**.
