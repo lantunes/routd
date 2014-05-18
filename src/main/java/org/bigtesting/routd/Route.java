@@ -29,7 +29,7 @@ import java.util.regex.Matcher;
 public class Route {
 
     private final String resourcePath;
-    private final List<PathParameterElement> pathParamElements;
+    private final List<NamedParameterElement> namedParamElements;
     
     public Route(String paramPath) {
         
@@ -37,12 +37,12 @@ public class Route {
             throw new IllegalArgumentException("path cannot be null");
         }
         this.resourcePath = paramPath;
-        this.pathParamElements = extractPathParamElements();
+        this.namedParamElements = extractNamedParamElements();
     }
     
-    private List<PathParameterElement> extractPathParamElements() {
+    private List<NamedParameterElement> extractNamedParamElements() {
         
-        List<PathParameterElement> elements = new ArrayList<PathParameterElement>();
+        List<NamedParameterElement> elements = new ArrayList<NamedParameterElement>();
         Matcher m = CUSTOM_REGEX_PATTERN.matcher(resourcePath);
         LinkedList<String> regexes = new LinkedList<String>();
         while (m.find()) {
@@ -58,7 +58,7 @@ public class Route {
                 if (!regexes.isEmpty()) {
                     regex = regexes.removeFirst();
                 }
-                elements.add(new PathParameterElement(currentElement, i, regex));
+                elements.add(new NamedParameterElement(currentElement, i, regex));
             }
         }
         return elements;
@@ -74,22 +74,27 @@ public class Route {
         return resourcePath;
     }
     
-    public List<PathParameterElement> pathParameterElements() {
+    public List<NamedParameterElement> getNamedParameterElements() {
         
-        return pathParamElements;            
+        return namedParamElements;            
     }
     
-    public String getPathParameter(String paramName, String path) {
+    public String getNamedParameter(String paramName, String path) {
         
-        List<PathParameterElement> pathParams = pathParameterElements();
+        List<NamedParameterElement> pathParams = getNamedParameterElements();
         String[] pathTokens = RouteHelper.getPathElements(path);
         
-        for (PathParameterElement pathParam : pathParams) {
+        for (NamedParameterElement pathParam : pathParams) {
             
             if (pathParam.name().equals(paramName)) return pathTokens[pathParam.index()];
         }
         
         return null;
+    }
+    
+    public String getSplatParameter(int index, String path) {
+        
+        return splat(path)[index];
     }
     
     public String[] splat(String path) {

@@ -19,13 +19,13 @@ package org.bigtesting.routd;
  * 
  * @author Luis Antunes
  */
-public class PathParameterElement {
+public class NamedParameterElement {
     
     private final String name;
     private final int index;
     private final String regex; 
     
-    public PathParameterElement(String name, int index, String regex) {
+    public NamedParameterElement(String name, int index, String regex) {
         this.name = name;
         this.index = index;
         this.regex = regex;

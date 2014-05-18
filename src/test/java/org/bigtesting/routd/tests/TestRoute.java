@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
-import org.bigtesting.routd.PathParameterElement;
+import org.bigtesting.routd.NamedParameterElement;
 import org.bigtesting.routd.Route;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -149,51 +149,51 @@ public class TestRoute {
     }
     
     @Test
-    public void pathParameterElements_NoneExist() {
+    public void getNamedParameterElements_NoneExist() {
         
         Route r = new Route("/actn");
-        List<PathParameterElement> params = r.pathParameterElements();
+        List<NamedParameterElement> params = r.getNamedParameterElements();
         
         assertTrue(params.isEmpty());
     }
     
     @Test
-    public void pathParameterElements_OneExistsWithAction() {
+    public void getNamedParameterElements_OneExistsWithAction() {
         
         Route r = new Route("/actn/:id");
         
-        List<PathParameterElement> params = r.pathParameterElements();
+        List<NamedParameterElement> params = r.getNamedParameterElements();
         assertEquals(1, params.size());
         
-        PathParameterElement elem = params.get(0);
+        NamedParameterElement elem = params.get(0);
         assertEquals("id", elem.name());
         assertEquals(1, elem.index());
         assertNull(elem.regex());
     }
     
     @Test
-    public void pathParameterElements_OneExistsAlone() {
+    public void getNamedParameterElements_OneExistsAlone() {
         
         Route r = new Route("/:id");
         
-        List<PathParameterElement> params = r.pathParameterElements();
+        List<NamedParameterElement> params = r.getNamedParameterElements();
         assertEquals(1, params.size());
         
-        PathParameterElement elem = params.get(0);
+        NamedParameterElement elem = params.get(0);
         assertEquals("id", elem.name());
         assertEquals(0, elem.index());
         assertNull(elem.regex());
     }
     
     @Test
-    public void pathParameterElements_ManyExistAlone() {
+    public void getNamedParameterElements_ManyExistAlone() {
         
         Route r = new Route("/:id/:name");
         
-        List<PathParameterElement> params = r.pathParameterElements();
+        List<NamedParameterElement> params = r.getNamedParameterElements();
         assertEquals(2, params.size());
         
-        PathParameterElement elem = params.get(0);
+        NamedParameterElement elem = params.get(0);
         assertEquals("id", elem.name());
         assertEquals(0, elem.index());
         assertNull(elem.regex());
@@ -205,14 +205,14 @@ public class TestRoute {
     }
     
     @Test
-    public void pathParameterElements_ManyExistWithControllerAndAction() {
+    public void getNamedParameterElements_ManyExistWithControllerAndAction() {
         
         Route r = new Route("/cntrl/actn/:id/:name");
         
-        List<PathParameterElement> params = r.pathParameterElements();
+        List<NamedParameterElement> params = r.getNamedParameterElements();
         assertEquals(2, params.size());
         
-        PathParameterElement elem = params.get(0);
+        NamedParameterElement elem = params.get(0);
         assertEquals("id", elem.name());
         assertEquals(2, elem.index());
         assertNull(elem.regex());
@@ -224,14 +224,14 @@ public class TestRoute {
     }
     
     @Test
-    public void pathParameterElements_ManyExistWithRegexWithControllerAndAction() {
+    public void getNamedParameterElements_ManyExistWithRegexWithControllerAndAction() {
         
         Route r = new Route("/cntrl/actn/:id<[0-9]+>/:name<[a-z]+>");
         
-        List<PathParameterElement> params = r.pathParameterElements();
+        List<NamedParameterElement> params = r.getNamedParameterElements();
         assertEquals(2, params.size());
         
-        PathParameterElement elem = params.get(0);
+        NamedParameterElement elem = params.get(0);
         assertEquals("id", elem.name());
         assertEquals(2, elem.index());
         assertEquals("[0-9]+", elem.regex());
@@ -243,14 +243,14 @@ public class TestRoute {
     }
     
     @Test
-    public void pathParameterElements_OneExistsWithRegexWithSlashWithControllerAndAction() {
+    public void getNamedParameterElements_OneExistsWithRegexWithSlashWithControllerAndAction() {
         
         Route r = new Route("/cntrl/actn/:id<[^/]+>/:name<[a-z]+>");
         
-        List<PathParameterElement> params = r.pathParameterElements();
+        List<NamedParameterElement> params = r.getNamedParameterElements();
         assertEquals(2, params.size());
         
-        PathParameterElement elem = params.get(0);
+        NamedParameterElement elem = params.get(0);
         assertEquals("id", elem.name());
         assertEquals(2, elem.index());
         assertEquals("[^/]+", elem.regex());
@@ -262,31 +262,31 @@ public class TestRoute {
     }
     
     @Test
-    public void getPathParameter() {
+    public void getNamedParameter() {
         
         Route route = new Route("/customer/:id");
         String path = "/customer/1";
         
-        assertEquals("1", route.getPathParameter("id", path));
+        assertEquals("1", route.getNamedParameter("id", path));
     }
     
     @Test
-    public void getPathParameter_WithMultipleParameters() {
+    public void getNamedParameter_WithMultipleParameters() {
         
         Route route = new Route("/customer/:id/named/:name");
         String path = "/customer/1/named/John";
         
-        assertEquals("1", route.getPathParameter("id", path));
-        assertEquals("John", route.getPathParameter("name", path));
+        assertEquals("1", route.getNamedParameter("id", path));
+        assertEquals("John", route.getNamedParameter("name", path));
     }
     
     @Test
-    public void getPathParameter_NotFound() {
+    public void getNamedParameter_NotFound() {
         
         Route route = new Route("/customer/:id");
         String path = "/customer/1";
         
-        assertNull(route.getPathParameter("name", path));
+        assertNull(route.getNamedParameter("name", path));
     }
     
     @Test
@@ -419,9 +419,9 @@ public class TestRoute {
         assertEquals(2, route.splat(path).length);
         assertEquals("hello", route.splat(path)[0]);
         assertEquals("time", route.splat(path)[1]);
-        List<PathParameterElement> params = route.pathParameterElements();
+        List<NamedParameterElement> params = route.getNamedParameterElements();
         assertEquals(2, params.size());
-        PathParameterElement elem = params.get(0);
+        NamedParameterElement elem = params.get(0);
         assertEquals("name", elem.name());
         assertEquals(3, elem.index());
         assertNull(elem.regex());
@@ -429,14 +429,14 @@ public class TestRoute {
         assertEquals("times", elem.name());
         assertEquals(4, elem.index());
         assertEquals("[0-9]+", elem.regex());
-        assertEquals("Tim", route.getPathParameter("name", path));
-        assertEquals("1", route.getPathParameter("times", path));
+        assertEquals("Tim", route.getNamedParameter("name", path));
+        assertEquals("1", route.getNamedParameter("times", path));
         
         path = "/say/hello/to/Tim/1/time/thanks";
         assertEquals(2, route.splat(path).length);
         assertEquals("hello", route.splat(path)[0]);
         assertEquals("time/thanks", route.splat(path)[1]);
-        params = route.pathParameterElements();
+        params = route.getNamedParameterElements();
         assertEquals(2, params.size());
         elem = params.get(0);
         assertEquals("name", elem.name());
@@ -446,8 +446,8 @@ public class TestRoute {
         assertEquals("times", elem.name());
         assertEquals(4, elem.index());
         assertEquals("[0-9]+", elem.regex());
-        assertEquals("Tim", route.getPathParameter("name", path));
-        assertEquals("1", route.getPathParameter("times", path));
+        assertEquals("Tim", route.getNamedParameter("name", path));
+        assertEquals("1", route.getNamedParameter("times", path));
         
         path = "/hello";
         assertEquals(0, route.splat(path).length);

@@ -169,6 +169,17 @@ public abstract class RouteMapContractTest {
         assertEquals(r1, rm.getRoute("/cntrl/actn/123"));
     }
     
+    @Test
+    public void getRoute_DoesNotMatchWithExtraPathElementAfter() {
+        
+        Route r1 = new Route("/cntrl/:name");
+        
+        rm.add(r1);
+        
+        assertEquals(r1, rm.getRoute("/cntrl/Tim"));
+        assertNull(rm.getRoute("/cntrl/Tim/blah"));
+    }
+    
     /*
      * TODO implement splat parameters (issue #1)
      */
