@@ -8,8 +8,15 @@ for most cases.
 ## Getting Started
 ------------------
 
-First, you'll need to clone this project and build it, and use the resulting jar. Routd will 
-eventually move to Maven central.
+Download [the latest .jar](http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=org.bigtesting&a=routd&v=LATEST).
+Or, add the following dependency to your pom.xml:
+
+```xml
+<dependency>
+    <groupId>org.bigtesting</groupId>
+    <artifactId>routd</artifactId>
+    <version>1.0.0</version>
+</dependency>
 
 ## Examples
 -----------
