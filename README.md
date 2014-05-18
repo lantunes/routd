@@ -17,6 +17,7 @@ Or, add the following dependency to your pom.xml:
     <artifactId>routd</artifactId>
     <version>1.0.0</version>
 </dependency>
+```
 
 ## Examples
 -----------
