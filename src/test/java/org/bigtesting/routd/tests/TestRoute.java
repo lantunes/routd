@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.bigtesting.routd.PathParameterElement;
 import org.bigtesting.routd.Route;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -31,6 +32,7 @@ public class TestRoute {
 
     @Test
     public void newRoute_NullPathThrowsException() {
+        
         try {
             new Route(null);
             fail("should have thrown IllegalArgumentException");
@@ -122,29 +124,30 @@ public class TestRoute {
     public void toString_WithController_NoAction_NoParamPath() {
         
         Route r = new Route("/cntrl");
-        String expected = "/cntrl";
-        String actual = r.toString();
-        assertEquals(expected, actual);
+        assertEquals("/cntrl", r.toString());
     }
     
     @Test
     public void toString_WithController_WithAction_NoParamPath() {
         
         Route r = new Route("/cntrl/actn");
-        String expected = "/cntrl/actn";
-        String actual = r.toString();
-        assertEquals(expected, actual);
+        assertEquals("/cntrl/actn", r.toString());
     }
     
     @Test
     public void toString_WithController_WithAction_WithParamPath() {
         
         Route r = new Route("/cntrl/actn/clients/:id");
-        String expected = "/cntrl/actn/clients/:id";
-        String actual = r.toString();
-        assertEquals(expected, actual);
+        assertEquals("/cntrl/actn/clients/:id", r.toString());
     }
 
+    @Test
+    public void toString_WithSplat() {
+        
+        Route r = new Route("/*");
+        assertEquals("/*", r.toString());
+    }
+    
     @Test
     public void pathParameterElements_NoneExist() {
         
@@ -284,5 +287,169 @@ public class TestRoute {
         String path = "/customer/1";
         
         assertNull(route.getPathParameter("name", path));
+    }
+    
+    @Test
+    public void splat_NoWildcards() {
+        
+       Route route = new Route("/");
+       String path = "/";
+       
+       assertEquals(0, route.splat(path).length);
+    }
+    
+    /*
+     * TODO implement splat parameters (issue #1)
+     */
+    @Ignore("implement splat parameters (issue #1)")
+    public void splat_GeneralWildcard() {
+        
+       Route route = new Route("/*");
+       
+       String path = "/hello/there";
+       assertEquals(1, route.splat(path).length);
+       assertEquals("hello/there", route.splat(path)[0]);
+       
+       path = "/hello";
+       assertEquals(1, route.splat(path).length);
+       assertEquals("hello", route.splat(path)[0]);
+       
+       path = "/hello/";
+       assertEquals(1, route.splat(path).length);
+       assertEquals("hello", route.splat(path)[0]);
+       
+       path = "/";
+       assertEquals(0, route.splat(path).length);
+    }
+    
+    /*
+     * TODO implement splat parameters (issue #1)
+     */
+    @Ignore("implement splat parameters (issue #1)")
+    public void splat_WithPrecedingResource() {
+        
+        Route route = new Route("/protected/*");
+        
+        String path = "/protected/1";
+        assertEquals(1, route.splat(path).length);
+        assertEquals("1", route.splat(path)[0]);
+        
+        path = "/protected/1/2";
+        assertEquals(1, route.splat(path).length);
+        assertEquals("1/2", route.splat(path)[0]);
+        
+        path = "/protected";
+        assertEquals(0, route.splat(path).length);
+        
+        path = "/protected/";
+        assertEquals(0, route.splat(path).length);
+        
+        path = "/hello";
+        assertEquals(0, route.splat(path).length);
+    }
+    
+    /*
+     * TODO implement splat parameters (issue #1)
+     */
+    @Ignore("implement splat parameters (issue #1)")
+    public void splat_InterjectedBetweenResources() {
+        
+        Route route = new Route("/protected/*/content");
+        
+        String path = "/protected/1/content";
+        assertEquals(1, route.splat(path).length);
+        assertEquals("1", route.splat(path)[0]);
+        
+        path = "/protected/blah/content";
+        assertEquals(1, route.splat(path).length);
+        assertEquals("blah", route.splat(path)[0]);
+        
+        path = "/protected/1/blah/content";
+        assertEquals(0, route.splat(path).length);
+        
+        path = "/hello";
+        assertEquals(0, route.splat(path).length);
+    }
+    
+    /*
+     * TODO implement splat parameters (issue #1)
+     */
+    @Ignore("implement splat parameters (issue #1)")
+    public void splat_OccuringMultipleTimes() {
+        
+        Route route = new Route("/say/*/to/*");
+        
+        String path = "/say/hello/to/world";
+        assertEquals(2, route.splat(path).length);
+        assertEquals("hello", route.splat(path)[0]);
+        assertEquals("world", route.splat(path)[1]);
+        
+        path = "/say/bye/to/Tim";
+        assertEquals(2, route.splat(path).length);
+        assertEquals("bye", route.splat(path)[0]);
+        assertEquals("Tim", route.splat(path)[1]);
+        
+        path = "/say/bye/bye/to/Tim";
+        assertEquals(0, route.splat(path).length);
+        
+        path = "/say/hello/to/John/Doe";
+        assertEquals(2, route.splat(path).length);
+        assertEquals("hello", route.splat(path)[0]);
+        assertEquals("John/Doe", route.splat(path)[1]);
+        
+        path = "/hello";
+        assertEquals(0, route.splat(path).length);
+    }
+    
+    /*
+     * TODO implement splat parameters (issue #1)
+     */
+    @Ignore("implement splat parameters (issue #1)")
+    public void splat_VariousPathParams() {
+        
+        Route route = new Route("/say/*/to/:name/:times<[0-9]+>/*");
+        
+        String path = "/say/hello/to/John";
+        assertEquals(0, route.splat(path).length);
+        
+        path = "/say/hello/to/John/1";
+        assertEquals(0, route.splat(path).length);
+        
+        path = "/say/hello/to/Tim/1/time";
+        assertEquals(2, route.splat(path).length);
+        assertEquals("hello", route.splat(path)[0]);
+        assertEquals("time", route.splat(path)[1]);
+        List<PathParameterElement> params = route.pathParameterElements();
+        assertEquals(2, params.size());
+        PathParameterElement elem = params.get(0);
+        assertEquals("name", elem.name());
+        assertEquals(3, elem.index());
+        assertNull(elem.regex());
+        elem = params.get(1);
+        assertEquals("times", elem.name());
+        assertEquals(4, elem.index());
+        assertEquals("[0-9]+", elem.regex());
+        assertEquals("Tim", route.getPathParameter("name", path));
+        assertEquals("1", route.getPathParameter("times", path));
+        
+        path = "/say/hello/to/Tim/1/time/thanks";
+        assertEquals(2, route.splat(path).length);
+        assertEquals("hello", route.splat(path)[0]);
+        assertEquals("time/thanks", route.splat(path)[1]);
+        params = route.pathParameterElements();
+        assertEquals(2, params.size());
+        elem = params.get(0);
+        assertEquals("name", elem.name());
+        assertEquals(3, elem.index());
+        assertNull(elem.regex());
+        elem = params.get(1);
+        assertEquals("times", elem.name());
+        assertEquals(4, elem.index());
+        assertEquals("[0-9]+", elem.regex());
+        assertEquals("Tim", route.getPathParameter("name", path));
+        assertEquals("1", route.getPathParameter("times", path));
+        
+        path = "/hello";
+        assertEquals(0, route.splat(path).length);
     }
 }

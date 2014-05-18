@@ -92,6 +92,12 @@ public class Route {
         return null;
     }
     
+    public String[] splat(String path) {
+        
+        //TODO implement splat parameters (issue #1)
+        return new String[]{};
+    }
+    
     public int hashCode() {
         
         int hash = 1;
