@@ -18,8 +18,9 @@ package org.bigtesting.routd;
 import static org.bigtesting.routd.RouteHelper.*;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 
 /**
@@ -29,7 +30,10 @@ import java.util.regex.Matcher;
 public class Route {
 
     private final String resourcePath;
+    private final List<PathElement> allPathElements;
     private final List<NamedParameterElement> namedParamElements;
+    private final List<SplatParameterElement> splatParamElements;
+    private final List<StaticPathElement> staticPathElements;
     
     public Route(String paramPath) {
         
@@ -37,48 +41,101 @@ public class Route {
             throw new IllegalArgumentException("path cannot be null");
         }
         this.resourcePath = paramPath;
-        this.namedParamElements = extractNamedParamElements();
+        
+        this.allPathElements = new ArrayList<PathElement>();
+        this.splatParamElements = new ArrayList<SplatParameterElement>();
+        this.staticPathElements = new ArrayList<StaticPathElement>();
+        this.namedParamElements = new ArrayList<NamedParameterElement>();
+        
+        extractPathElements();
     }
     
-    private List<NamedParameterElement> extractNamedParamElements() {
+    private void extractPathElements() {
         
-        List<NamedParameterElement> elements = new ArrayList<NamedParameterElement>();
         Matcher m = CUSTOM_REGEX_PATTERN.matcher(resourcePath);
-        LinkedList<String> regexes = new LinkedList<String>();
-        while (m.find()) {
-            regexes.add(resourcePath.substring(m.start() + 1, m.end() - 1));
-        }
+        Map<String, String> regexMap = getRegexMap(m);
         String path = m.replaceAll("");
-        String[] pathElements = getPathElements(path);
+        
+        String[] pathElements = RouteHelper.getPathElements(path);
         for (int i = 0; i < pathElements.length; i++) {
+            
             String currentElement = pathElements[i];
+            
             if (currentElement.startsWith(PARAM_PREFIX)) {
+                
                 currentElement = currentElement.substring(1);
-                String regex = null;
-                if (!regexes.isEmpty()) {
-                    regex = regexes.removeFirst();
-                }
-                elements.add(new NamedParameterElement(currentElement, i, regex));
+                NamedParameterElement named = 
+                        new NamedParameterElement(currentElement, i, regexMap.get(currentElement));
+                namedParamElements.add(named);
+                allPathElements.add(named);
+                
+            } else if (currentElement.equals(WILDCARD)) {
+                
+                SplatParameterElement splat = new SplatParameterElement(i);
+                splatParamElements.add(splat);
+                allPathElements.add(splat);
+                
+            } else {
+                
+                if (currentElement.trim().length() < 1) continue;
+                StaticPathElement staticElem = new StaticPathElement(currentElement, i);
+                staticPathElements.add(staticElem);
+                allPathElements.add(staticElem);
             }
         }
-        return elements;
+    }
+    
+    /*
+     * Returns a map of named param names to their regex, for
+     * named params that have a regex.
+     * e.g. {"name" -> "[a-z]+"}
+     */
+    private Map<String, String> getRegexMap(Matcher m) {
+        
+        Map<String, String> regexMap = new HashMap<String, String>();
+        while (m.find()) {
+            String regex = resourcePath.substring(m.start() + 1, m.end() - 1);
+            int namedParamStart = m.start() - 1;
+            int namedParamEnd = m.start();
+            String namedParamName = resourcePath.substring(namedParamStart, namedParamEnd);
+            while (!namedParamName.startsWith(PARAM_PREFIX)) {
+                namedParamStart--;
+                namedParamName = resourcePath.substring(namedParamStart, namedParamEnd);
+            }
+            namedParamName = resourcePath.substring(namedParamStart + 1, namedParamEnd);
+            regexMap.put(namedParamName, regex);
+        }
+        return regexMap;
     }
     
     public String getResourcePath() {
         
         return resourcePath;
     }
-    
-    public String toString() {
+
+    public List<PathElement> getPathElements() {
         
-        return resourcePath;
+        return new ArrayList<PathElement>(allPathElements);
     }
     
     public List<NamedParameterElement> getNamedParameterElements() {
         
-        return namedParamElements;            
+        return new ArrayList<NamedParameterElement>(namedParamElements);            
     }
     
+    public List<SplatParameterElement> getSplatParameterElements() {
+        
+        return new ArrayList<SplatParameterElement>(splatParamElements);            
+    }
+    
+    public List<StaticPathElement> getStaticPathElements() {
+        
+        return new ArrayList<StaticPathElement>(staticPathElements);
+    }
+    
+    /**
+     * Use of this method assumes the path given matches this Route.
+     */
     public String getNamedParameter(String paramName, String path) {
         
         List<NamedParameterElement> pathParams = getNamedParameterElements();
@@ -92,15 +149,46 @@ public class Route {
         return null;
     }
     
+    /**
+     * Use of this method assumes the path given matches this Route.
+     */
     public String getSplatParameter(int index, String path) {
         
         return splat(path)[index];
     }
     
+    /**
+     * Use of this method assumes the path given matches this Route.
+     */
     public String[] splat(String path) {
         
-        //TODO implement splat parameters (issue #1)
-        return new String[]{};
+        List<SplatParameterElement> splatParams = getSplatParameterElements();
+        String[] pathTokens = RouteHelper.getPathElements(path);
+        String[] splat = new String[splatParams.size()];
+        
+        for (int i = 0; i < splatParams.size(); i++) {
+            
+            SplatParameterElement splatParam = splatParams.get(i);
+            splat[i] = pathTokens[splatParam.index()];
+            
+            if (i + 1 == splatParams.size() && endsWithSplat()) {
+                /* this is the last splat param and the route ends with splat */
+                for (int j = splatParam.index() + 1; j < pathTokens.length; j++) {
+                    splat[i] = splat[i] + PATH_ELEMENT_SEPARATOR + pathTokens[j];
+                }
+            }
+        }
+        
+        return splat;
+    }
+    
+    private boolean endsWithSplat() {
+        return resourcePath.endsWith(WILDCARD);
+    }
+    
+    public String toString() {
+        
+        return resourcePath;
     }
     
     public int hashCode() {

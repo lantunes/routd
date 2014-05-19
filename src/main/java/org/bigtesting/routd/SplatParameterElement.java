@@ -15,13 +15,16 @@
  */
 package org.bigtesting.routd;
 
+import static org.bigtesting.routd.RouteHelper.*;
+
 /**
  * 
  * @author Luis Antunes
  */
-public interface RouteMap {
+public class SplatParameterElement extends PathElement {
 
-    void add(Route route);
-    
-    Route getRoute(String path);
+    public SplatParameterElement(int index) {
+        
+        super(WILDCARD, index);
+    }
 }

@@ -13,28 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bigtesting.routd.tests;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+package org.bigtesting.routd;
 
 /**
  * 
  * @author Luis Antunes
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-    TestRegexRoute.class,
-    TestRegexRouter.class,
-    TestRoute.class,
-    TestRouteHelper.class,
-    TestRegexRouteComparator.class,
-    TestTrieRouter.class
-})
-public class RoutdTestSuite {
-    /*
-     *  the class remains completely empty,
-     *  being used only as a placeholder for 
-     *  the above annotations 
-     */
+public interface Router {
+
+    void add(Route route);
+    
+    Route route(String path);
 }

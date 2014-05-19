@@ -15,25 +15,24 @@
  */
 package org.bigtesting.routd;
 
-import java.util.Collections;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.regex.Matcher;
 
 /**
  * 
  * @author Luis Antunes
  */
-public class RegexRouteMap implements RouteMap {
+public class RegexRouter implements Router {
 
     private final Set<RegexRoute> routes = 
-            Collections.newSetFromMap(new ConcurrentHashMap<RegexRoute, Boolean>());
+            new ConcurrentSkipListSet<RegexRoute>(new RegexRouteComparator());
     
     public void add(Route route) {
         routes.add(new RegexRoute(route));
     }
     
-    public Route getRoute(String path) {
+    public Route route(String path) {
         
         for (RegexRoute route : routes) {
             Matcher m = route.pattern().matcher(path);

@@ -13,28 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bigtesting.routd.tests;
+package org.bigtesting.routd;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
 /**
  * 
  * @author Luis Antunes
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-    TestRegexRoute.class,
-    TestRegexRouter.class,
-    TestRoute.class,
-    TestRouteHelper.class,
-    TestRegexRouteComparator.class,
-    TestTrieRouter.class
-})
-public class RoutdTestSuite {
-    /*
-     *  the class remains completely empty,
-     *  being used only as a placeholder for 
-     *  the above annotations 
-     */
+public class TrieRouter implements Router {
+
+    private TrieNode root; 
+    
+    public void add(Route route) {
+        
+        root = new TrieNode(route.getResourcePath());
+    }
+    
+    public Route route(String path) {
+        
+        return null;
+    }
+    
+    public TrieNode getRoot() {
+        
+        return root;
+    }
 }

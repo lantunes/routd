@@ -15,26 +15,17 @@
  */
 package org.bigtesting.routd.tests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.bigtesting.routd.RegexRouter;
+import org.bigtesting.routd.Router;
 
 /**
  * 
  * @author Luis Antunes
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-    TestRegexRoute.class,
-    TestRegexRouter.class,
-    TestRoute.class,
-    TestRouteHelper.class,
-    TestRegexRouteComparator.class,
-    TestTrieRouter.class
-})
-public class RoutdTestSuite {
-    /*
-     *  the class remains completely empty,
-     *  being used only as a placeholder for 
-     *  the above annotations 
-     */
+public class TestRegexRouter extends RouterContractTest {
+
+    @Override
+    protected Router newRouteMap() {
+        return new RegexRouter();
+    }
 }

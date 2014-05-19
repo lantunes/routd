@@ -29,73 +29,121 @@ public class TestRegexRoute {
 
     @Test
     public void pattern_Root() {
+        
         RegexRoute r = new RegexRoute(new Route("/"));
-        String expected = "^/$";
-        String actual = r.pattern().toString();
-        assertEquals(expected, actual);
+        String pattern = r.pattern().toString();
+        assertEquals("^/$", pattern);
     }
     
     @Test
     public void pattern_WithController_NoAction_NoParamPath() {
+        
         RegexRoute r = new RegexRoute(new Route("/cntrl"));
-        String expected = "^/cntrl$";
-        String actual = r.pattern().toString();
-        assertEquals(expected, actual);
+        String pattern = r.pattern().toString();
+        assertEquals("^/cntrl$", pattern);
     }
     
     @Test
     public void pattern_WithController_WithAction_NoParamPath() {
+        
         RegexRoute r = new RegexRoute(new Route("/cntrl/actn"));
-        String expected = "^/cntrl/actn$";
-        String actual = r.pattern().toString();
-        assertEquals(expected, actual);
+        String pattern = r.pattern().toString();
+        assertEquals("^/cntrl/actn$", pattern);
     }
     
     @Test
     public void pattern_WithController_WithAction_WithParamPath() {
+        
         RegexRoute r = new RegexRoute(new Route("/cntrl/actn/clients/:id"));
-        String expected = "^/cntrl/actn/clients/([^/]+)$";
-        String actual = r.pattern().toString();
-        assertEquals(expected, actual);
+        String pattern = r.pattern().toString();
+        assertEquals("^/cntrl/actn/clients/([^/]+)$", pattern);
+    }
+    
+    @Test
+    public void pattern_WithInterjectedParamPath() {
+        
+        RegexRoute r = new RegexRoute(new Route("/cntrl/:id/actn"));
+        String pattern = r.pattern().toString();
+        assertEquals("^/cntrl/([^/]+)/actn$", pattern);
     }
     
     @Test
     public void pattern_NoController_WithAction_WithParamPath() {
+        
         RegexRoute r = new RegexRoute(new Route("/actn/clients/:id"));
-        String expected = "^/actn/clients/([^/]+)$";
-        String actual = r.pattern().toString();
-        assertEquals(expected, actual);
+        String pattern = r.pattern().toString();
+        assertEquals("^/actn/clients/([^/]+)$", pattern);
     }
     
     @Test
     public void pattern_NoController_NoAction_WithParamPath() {
+        
         RegexRoute r = new RegexRoute(new Route("/clients/:id"));
-        String expected = "^/clients/([^/]+)$";
-        String actual = r.pattern().toString();
-        assertEquals(expected, actual);
+        String pattern = r.pattern().toString();
+        assertEquals("^/clients/([^/]+)$", pattern);
     }
     
     @Test
     public void pattern_WithController_WithAction_WithRegexParamPath() {
+        
         RegexRoute r = new RegexRoute(new Route("/cntrl/actn/clients/:id<[0-9]+>"));
-        String expected = "^/cntrl/actn/clients/([0-9]+)$";
-        String actual = r.pattern().toString();
-        assertEquals(expected, actual);
+        String pattern = r.pattern().toString();
+        assertEquals("^/cntrl/actn/clients/([0-9]+)$", pattern);
     }
     
     @Test
     public void pattern_WithController_WithAction_WithMultiRegexParamPath() {
+        
         RegexRoute r = new RegexRoute(new Route("/cntrl/actn/clients/:id<[0-9]+>/:name"));
-        String expected = "^/cntrl/actn/clients/([0-9]+)/([^/]+)$";
-        String actual = r.pattern().toString();
-        assertEquals(expected, actual);
+        String pattern = r.pattern().toString();
+        assertEquals("^/cntrl/actn/clients/([0-9]+)/([^/]+)$", pattern);
     }
     
     @Test
     public void pattern_WithController_WithAction_WithRegexSymbols() {
+        
         RegexRoute r = new RegexRoute(new Route("/cntrl/actn/a+b/:id<[0-9]+>/:name"));
-        String expected = "^/cntrl/actn/a\\+b/([0-9]+)/([^/]+)$";
-        String actual = r.pattern().toString();
-        assertEquals(expected, actual);
+        String pattern = r.pattern().toString();
+        assertEquals("^/cntrl/actn/a\\+b/([0-9]+)/([^/]+)$", pattern);
+    }
+    
+    @Test
+    public void pattern_SplatGeneralWildcard() {
+        
+        RegexRoute r = new RegexRoute(new Route("/*"));
+        String pattern = r.pattern().toString();
+        assertEquals("^/(.*)$", pattern);
+    }
+    
+    @Test
+    public void pattern_SplatWithPrecedingResource() {
+        
+        RegexRoute r = new RegexRoute(new Route("/protected/*"));
+        String pattern = r.pattern().toString();
+        assertEquals("^/protected/(.*)$", pattern);
+    }
+    
+    @Test
+    public void pattern_SplatInterjectedBetweenResources() {
+        
+        RegexRoute r = new RegexRoute(new Route("/protected/*/content"));
+        String pattern = r.pattern().toString();
+        assertEquals("^/protected/([^/]*)/content$", pattern);
+    }
+    
+    @Test
+    public void pattern_SplatOccurringMultipleTimes() {
+        
+        RegexRoute r = new RegexRoute(new Route("/say/*/to/*"));
+        String pattern = r.pattern().toString();
+        assertEquals("^/say/([^/]*)/to/(.*)$", pattern);
+    }
+    
+    @Test
+    public void pattern_SplatVariousPathParams() {
+        
+        RegexRoute r = new RegexRoute(new Route("/say/*/to/:name/:times<[0-9]+>/*"));
+        String pattern = r.pattern().toString();
+        assertEquals("^/say/([^/]*)/to/([^/]+)/([0-9]+)/(.*)$", pattern);
     }
 }

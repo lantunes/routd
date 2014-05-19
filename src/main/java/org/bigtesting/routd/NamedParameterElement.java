@@ -19,36 +19,13 @@ package org.bigtesting.routd;
  * 
  * @author Luis Antunes
  */
-public class NamedParameterElement {
+public class NamedParameterElement extends PathElement {
     
-    private final String name;
-    private final int index;
     private final String regex; 
     
     public NamedParameterElement(String name, int index, String regex) {
-        this.name = name;
-        this.index = index;
+        super(name, index);
         this.regex = regex;
-    }
-    
-    /**
-     * Returns the name of the element in the route.
-     * Elements are prefixed by a colon.
-     * 
-     * @return the name of the element in the route
-     */
-    public String name() {
-        return name;
-    }
-    
-    /**
-     * Returns the absolute position of the element
-     * in the route.
-     * 
-     * @return the index of the element in the route
-     */
-    public int index() {
-        return index;
     }
     
     /**

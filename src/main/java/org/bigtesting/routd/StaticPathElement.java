@@ -13,19 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bigtesting.routd.tests;
-
-import org.bigtesting.routd.RegexRouteMap;
-import org.bigtesting.routd.RouteMap;
+package org.bigtesting.routd;
 
 /**
  * 
  * @author Luis Antunes
  */
-public class TestRegexRouteMap extends RouteMapContractTest {
+public class StaticPathElement extends PathElement {
 
-    @Override
-    protected RouteMap newRouteMap() {
-        return new RegexRouteMap();
+    public StaticPathElement(String name, int index) {
+        
+        super(name, index);
     }
 }

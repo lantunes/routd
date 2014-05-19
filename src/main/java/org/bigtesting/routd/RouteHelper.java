@@ -33,6 +33,8 @@ public class RouteHelper {
     public static final String PARAM_PREFIX = ":";
     public static final char CUSTOM_REGEX_START = '<';
     public static final char CUSTOM_REGEX_END = '>';
+    public static final String WILDCARD = "*";
+    
     /*
      * From the Java API documentation for the Pattern class:
      * 
