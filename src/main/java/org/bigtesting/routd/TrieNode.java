@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  */
 public class TrieNode {
     
-    private List<TrieNode> children = new ArrayList<TrieNode>();
+    private final List<TrieNode> children = new ArrayList<TrieNode>();
     
     /*
      * From the Java API documentation for the Pattern class:
@@ -37,17 +37,92 @@ public class TrieNode {
      */
     private final Pattern pattern;
     
+    private Route route;
+    
+    private PathElement pathElement;
+    
+    public TrieNode(PathElement elem) {
+        
+        this(elem, null);
+    }
+    
+    public TrieNode(PathElement elem, Route route) {
+        
+        this.pattern = compilePattern(elem);
+        this.pathElement = elem;
+        this.route = route;
+    }
+    
     public TrieNode(String token) {
         
-        pattern = compilePattern(token);
+        this(token, null);
+    }
+    
+    public TrieNode(String token, Route route) {
+        
+        this.pattern = compilePattern(token);
+        this.route = route;
     }
     
     private Pattern compilePattern(String token) {
         
-        StringBuilder routeRegex = new StringBuilder("^").append(PATH_ELEMENT_SEPARATOR);
+        StringBuilder routeRegex = new StringBuilder("^");
+        routeRegex.append(token); //TODO do we need to escape regex symbols?
+        routeRegex.append("$");
+        return Pattern.compile(routeRegex.toString());
+    }
+    
+    private Pattern compilePattern(PathElement elem) {
+        
+        StringBuilder routeRegex = new StringBuilder("^");
+        
+        if (elem instanceof NamedParameterElement) {
+            
+            NamedParameterElement namedElem = (NamedParameterElement)elem;
+            if (namedElem.hasRegex()) {
+                routeRegex.append("(").append(namedElem.regex()).append(")");
+            } else {
+                routeRegex.append("([^").append(PATH_ELEMENT_SEPARATOR).append("]+)");
+            }
+            
+        } else if (elem instanceof SplatParameterElement) {
+            
+            //TODO
+//            routeRegex.append("(");
+//            if ((i + 1) == tokens.length) {
+//                /* this is the last token */
+//                routeRegex.append(".");
+//            } else {
+//                routeRegex.append("[^").append(PATH_ELEMENT_SEPARATOR).append("]");
+//            }
+//            routeRegex.append("*)");
+            
+        } else {
+            
+            routeRegex.append(elem.name());
+        }
         
         routeRegex.append("$");
         return Pattern.compile(routeRegex.toString());
+    }
+    
+    public boolean matches(String token) {
+        
+        return pattern().matcher(token).find();
+    }
+    
+    public boolean matches(PathElement elem) {
+        
+        if (pathElement != null) {
+            return pathElement.equals(elem);
+        }
+        
+        return false;
+    }
+    
+    public void addChild(TrieNode node) {
+        
+        this.children.add(node);
     }
     
     public List<TrieNode> getChildren() {
@@ -62,7 +137,12 @@ public class TrieNode {
     
     public Route getRoute() {
         
-        return null;
+        return route;
+    }
+    
+    public void setRoute(Route route) {
+        
+        this.route = route;
     }
     
     public String toString() {

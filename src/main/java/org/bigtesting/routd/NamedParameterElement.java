@@ -38,4 +38,8 @@ public class NamedParameterElement extends PathElement {
     public String regex() {
         return regex;
     }
+    
+    public boolean hasRegex() {
+        return regex != null && regex.trim().length() > 0;
+    }
 }

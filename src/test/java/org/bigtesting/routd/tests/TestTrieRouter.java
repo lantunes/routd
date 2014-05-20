@@ -104,6 +104,6 @@ public class TestTrieRouter {
         assertNull(router.route("/blah"));
     }
     
-    @Test public void placeholder() {}
-    
+    @Test
+    public void placeholder() {}
 }
