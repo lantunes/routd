@@ -33,10 +33,10 @@ public abstract class RouterContractTest {
     @Before
     public void beforeEachTest() {
         
-        router = newRouteMap();
+        router = newRouter();
     }
     
-    protected abstract Router newRouteMap();
+    protected abstract Router newRouter();
     
     @Test
     public void route_Root() {
@@ -154,6 +154,7 @@ public abstract class RouterContractTest {
         router.add(r2);
         
         assertEquals(r2, router.route("/cntrl/actn/bob"));
+        assertNull(router.route("/cntrl/actn/bob/"));
     }
     
     @Test
@@ -166,6 +167,7 @@ public abstract class RouterContractTest {
         router.add(r2);
         
         assertEquals(r1, router.route("/cntrl/actn/123"));
+        assertNull(router.route("/cntrl/actn/123/"));
     }
     
     @Test
@@ -263,5 +265,15 @@ public abstract class RouterContractTest {
         assertEquals(r1, router.route("/say/hello/to/John/1/"));
         assertEquals(r1, router.route("/say/hello/to/Tim/1/time"));
         assertEquals(r1, router.route("/say/hello/to/Tim/1/time/thanks"));
+    }
+    
+    @Test
+    public void route_PathContainsRegexSymbols() throws Exception {
+        
+        Route r = new Route("/hello$.html");
+        
+        router.add(r);
+        
+        assertEquals(r, router.route("/hello$.html"));
     }
 }

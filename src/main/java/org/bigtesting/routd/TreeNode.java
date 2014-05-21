@@ -25,9 +25,9 @@ import java.util.regex.Pattern;
  * 
  * @author Luis Antunes
  */
-public class TrieNode {
+public class TreeNode {
     
-    private final List<TrieNode> children = new ArrayList<TrieNode>();
+    private final List<TreeNode> children = new ArrayList<TreeNode>();
     
     /*
      * From the Java API documentation for the Pattern class:
@@ -37,39 +37,14 @@ public class TrieNode {
      */
     private final Pattern pattern;
     
+    private final PathElement pathElement;
+    
     private Route route;
     
-    private PathElement pathElement;
-    
-    public TrieNode(PathElement elem) {
-        
-        this(elem, null);
-    }
-    
-    public TrieNode(PathElement elem, Route route) {
+    public TreeNode(PathElement elem) {
         
         this.pattern = compilePattern(elem);
         this.pathElement = elem;
-        this.route = route;
-    }
-    
-    public TrieNode(String token) {
-        
-        this(token, null);
-    }
-    
-    public TrieNode(String token, Route route) {
-        
-        this.pattern = compilePattern(token);
-        this.route = route;
-    }
-    
-    private Pattern compilePattern(String token) {
-        
-        StringBuilder routeRegex = new StringBuilder("^");
-        routeRegex.append(token); //TODO do we need to escape regex symbols?
-        routeRegex.append("$");
-        return Pattern.compile(routeRegex.toString());
     }
     
     private Pattern compilePattern(PathElement elem) {
@@ -87,19 +62,11 @@ public class TrieNode {
             
         } else if (elem instanceof SplatParameterElement) {
             
-            //TODO
-//            routeRegex.append("(");
-//            if ((i + 1) == tokens.length) {
-//                /* this is the last token */
-//                routeRegex.append(".");
-//            } else {
-//                routeRegex.append("[^").append(PATH_ELEMENT_SEPARATOR).append("]");
-//            }
-//            routeRegex.append("*)");
+            routeRegex.append("(.*)");
             
         } else {
             
-            routeRegex.append(elem.name());
+            routeRegex.append(escapeNonCustomRegex(elem.name()));
         }
         
         routeRegex.append("$");
@@ -120,19 +87,23 @@ public class TrieNode {
         return false;
     }
     
-    public void addChild(TrieNode node) {
+    public void addChild(TreeNode node) {
         
         this.children.add(node);
     }
     
-    public List<TrieNode> getChildren() {
+    public List<TreeNode> getChildren() {
         
-        return new ArrayList<TrieNode>(children);
+        return new ArrayList<TreeNode>(children);
     }
     
     public Pattern pattern() {
         
         return pattern;
+    }
+    
+    public boolean isSplat() {
+        return pathElement instanceof SplatParameterElement;
     }
     
     public Route getRoute() {

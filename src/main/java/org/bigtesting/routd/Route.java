@@ -186,6 +186,10 @@ public class Route {
         return resourcePath.endsWith(WILDCARD);
     }
     
+    public boolean endsWithPathSeparator() {
+        return resourcePath.endsWith(PATH_ELEMENT_SEPARATOR);
+    }
+    
     public String toString() {
         
         return resourcePath;

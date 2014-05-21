@@ -29,7 +29,7 @@ import org.junit.runners.Suite;
     TestRoute.class,
     TestRouteHelper.class,
     TestRegexRouteComparator.class,
-    TestTrieRouter.class
+    TestTreeRouter.class
 })
 public class RoutdTestSuite {
     /*

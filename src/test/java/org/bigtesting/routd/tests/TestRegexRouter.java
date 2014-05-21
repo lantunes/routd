@@ -25,7 +25,7 @@ import org.bigtesting.routd.Router;
 public class TestRegexRouter extends RouterContractTest {
 
     @Override
-    protected Router newRouteMap() {
+    protected Router newRouter() {
         return new RegexRouter();
     }
 }

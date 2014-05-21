@@ -25,24 +25,28 @@ import java.util.List;
  * 
  * @author Luis Antunes
  */
-public class TrieRouter implements Router {
+public class TreeRouter implements Router {
 
-    private TrieNode root; 
+    private TreeNode root; 
     
     public void add(Route route) {
         
         List<PathElement> pathElements = route.getPathElements();
-        
-        if (root == null) {
-            root = new TrieNode(PATH_ELEMENT_SEPARATOR);
+        if (!pathElements.isEmpty() && route.endsWithPathSeparator()) {
+            pathElements.add(
+                    new StaticPathElement(PATH_ELEMENT_SEPARATOR, pathElements.size() - 1));
         }
         
-        TrieNode currentNode = root;
+        if (root == null) {
+            root = new TreeNode(new StaticPathElement(PATH_ELEMENT_SEPARATOR, 0));
+        }
+        
+        TreeNode currentNode = root;
         for (PathElement elem : pathElements) {
             
-            TrieNode matchingNode = getMatchingNode(elem, currentNode.getChildren());
+            TreeNode matchingNode = getMatchingNode(elem, currentNode.getChildren());
             if (matchingNode == null) {
-                TrieNode newChild = new TrieNode(elem);
+                TreeNode newChild = new TreeNode(elem);
                 currentNode.addChild(newChild);
                 currentNode = newChild;
             } else {
@@ -52,9 +56,9 @@ public class TrieRouter implements Router {
         currentNode.setRoute(route);
     }
     
-    private TrieNode getMatchingNode(PathElement elem, List<TrieNode> nodes) {
+    private TreeNode getMatchingNode(PathElement elem, List<TreeNode> nodes) {
         
-        for (TrieNode node : nodes) {
+        for (TreeNode node : nodes) {
             if (node.matches(elem)) return node;
         }
         return null;
@@ -64,21 +68,30 @@ public class TrieRouter implements Router {
         
         List<String> searchTokens = getPathAsSearchTokens(path);
         
-        TrieNode currentMatchingNode = root;
+        TreeNode currentMatchingNode = root;
         for (String token : searchTokens) {
             
-            TrieNode matchingNode = 
+            TreeNode matchingNode = 
                     getFirstMatchingNode(token, currentMatchingNode.getChildren());
             if (matchingNode == null) return null;
             currentMatchingNode = matchingNode;
+            
+            if (currentMatchingNode.isSplat() && 
+                    currentMatchingNode.getChildren().isEmpty()) {
+                return currentMatchingNode.getRoute();
+            }
         }
         
         return currentMatchingNode.getRoute();
     }
     
-    private TrieNode getFirstMatchingNode(String token, List<TrieNode> nodes) {
+    private TreeNode getFirstMatchingNode(String token, List<TreeNode> nodes) {
         
-        for (TrieNode node : nodes) {
+        /*
+         * TODO
+         * do the children have to be sorted? so that * matches before static, and named?
+         */
+        for (TreeNode node : nodes) {
             if (node.matches(token)) return node;
         }
         return null;
@@ -94,10 +107,14 @@ public class TrieRouter implements Router {
                 tokens.add(token);
             }
         }
+        if (!tokens.isEmpty() && 
+                path.trim().endsWith(PATH_ELEMENT_SEPARATOR)) {
+            tokens.add(PATH_ELEMENT_SEPARATOR);
+        }
         return tokens;
     }
     
-    public TrieNode getRoot() {
+    public TreeNode getRoot() {
         
         return root;
     }
