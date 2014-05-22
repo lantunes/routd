@@ -68,6 +68,11 @@ public class TreeRouter implements Router {
         
         List<String> searchTokens = getPathAsSearchTokens(path);
         
+        /* handle the case where path is '/' and route '/*' exists */
+        if (searchTokens.isEmpty() && root.containsSplatChild() && !root.hasRoute()) {
+            return root.getSplatChild().getRoute();
+        }
+        
         TreeNode currentMatchingNode = root;
         for (String token : searchTokens) {
             
@@ -77,7 +82,7 @@ public class TreeRouter implements Router {
             currentMatchingNode = matchingNode;
             
             if (currentMatchingNode.isSplat() && 
-                    currentMatchingNode.getChildren().isEmpty()) {
+                    !currentMatchingNode.hasChildren()) {
                 return currentMatchingNode.getRoute();
             }
         }
@@ -87,10 +92,6 @@ public class TreeRouter implements Router {
     
     private TreeNode getFirstMatchingNode(String token, List<TreeNode> nodes) {
         
-        /*
-         * TODO
-         * do the children have to be sorted? so that * matches before static, and named?
-         */
         for (TreeNode node : nodes) {
             if (node.matches(token)) return node;
         }
@@ -106,7 +107,7 @@ public class TreeRouter implements Router {
             if (token != null && token.trim().length() > 0) {
                 tokens.add(token);
             }
-        }
+        }        
         if (!tokens.isEmpty() && 
                 path.trim().endsWith(PATH_ELEMENT_SEPARATOR)) {
             tokens.add(PATH_ELEMENT_SEPARATOR);

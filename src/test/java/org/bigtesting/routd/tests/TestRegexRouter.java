@@ -16,16 +16,15 @@
 package org.bigtesting.routd.tests;
 
 import org.bigtesting.routd.RegexRouter;
-import org.bigtesting.routd.Router;
 
 /**
  * 
  * @author Luis Antunes
  */
-public class TestRegexRouter extends RouterContractTest {
+public class TestRegexRouter extends RouterContractTest<RegexRouter> {
 
     @Override
-    protected Router newRouter() {
+    protected RegexRouter newRouter() {
         return new RegexRouter();
     }
 }

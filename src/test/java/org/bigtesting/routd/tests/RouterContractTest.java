@@ -26,9 +26,9 @@ import org.junit.Test;
  * 
  * @author Luis Antunes
  */
-public abstract class RouterContractTest {
+public abstract class RouterContractTest<R extends Router> {
     
-    private Router router;
+    protected R router;
     
     @Before
     public void beforeEachTest() {
@@ -36,7 +36,7 @@ public abstract class RouterContractTest {
         router = newRouter();
     }
     
-    protected abstract Router newRouter();
+    protected abstract R newRouter();
     
     @Test
     public void route_Root() {
@@ -200,6 +200,19 @@ public abstract class RouterContractTest {
         assertEquals(r1, router.route("/specific"));
         assertEquals(r1, router.route("/123"));
         assertEquals(r1, router.route("/hello/"));
+    }
+    
+    @Test
+    public void route_SplatPathParameterForAllRequestsWithRootRoute() throws Exception {
+        
+        Route r0 = new Route("/");
+        Route r1 = new Route("/*");
+        
+        router.add(r0);
+        router.add(r1);
+        
+        assertEquals(r0, router.route("/"));
+        assertEquals(r1, router.route("/blah"));
     }
     
     @Test

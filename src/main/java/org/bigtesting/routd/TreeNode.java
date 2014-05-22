@@ -18,6 +18,8 @@ package org.bigtesting.routd;
 import static org.bigtesting.routd.RouteHelper.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -40,6 +42,8 @@ public class TreeNode {
     private final PathElement pathElement;
     
     private Route route;
+    
+    private final TreeNodeComparator treeNodeComparator = new TreeNodeComparator();
     
     public TreeNode(PathElement elem) {
         
@@ -90,11 +94,29 @@ public class TreeNode {
     public void addChild(TreeNode node) {
         
         this.children.add(node);
+        Collections.sort(this.children, treeNodeComparator);
     }
     
     public List<TreeNode> getChildren() {
         
         return new ArrayList<TreeNode>(children);
+    }
+    
+    public boolean hasChildren() {
+        return !children.isEmpty();
+    }
+    
+    public boolean containsSplatChild() {
+        return getSplatChild() != null;
+    }
+    
+    public TreeNode getSplatChild() {
+        for (TreeNode child : children) {
+            if (child.pathElement instanceof SplatParameterElement) {
+                return child;
+            }
+        }
+        return null;
     }
     
     public Pattern pattern() {
@@ -116,8 +138,31 @@ public class TreeNode {
         this.route = route;
     }
     
+    public boolean hasRoute() {
+        return this.route != null;
+    }
+    
     public String toString() {
         
         return pattern.toString();
+    }
+    
+    private static class TreeNodeComparator implements Comparator<TreeNode> {
+        
+        public int compare(TreeNode node1, TreeNode node2) {
+        
+            String r1Elem = getElem(node1.pathElement);
+            String r2Elem = getElem(node2.pathElement);
+            
+            return new PathElementComparator().compare(r1Elem, r2Elem);
+        }
+        
+        private String getElem(PathElement element) {
+            String elem = element.name();
+            if (element instanceof NamedParameterElement) {
+                elem = PARAM_PREFIX + elem;
+            }
+            return elem;
+        }
     }
 }
