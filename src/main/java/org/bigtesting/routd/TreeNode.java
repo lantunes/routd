@@ -102,6 +102,22 @@ public class TreeNode {
         return new ArrayList<TreeNode>(children);
     }
     
+    public TreeNode getMatchingChild(PathElement elem) {
+        
+        for (TreeNode node : children) {
+            if (node.matches(elem)) return node;
+        }
+        return null;
+    }
+    
+    public TreeNode getMatchingChild(String token) {
+        
+        for (TreeNode node : children) {
+            if (node.matches(token)) return node;
+        }
+        return null;
+    }
+    
     public boolean hasChildren() {
         return !children.isEmpty();
     }
@@ -111,6 +127,7 @@ public class TreeNode {
     }
     
     public TreeNode getSplatChild() {
+        
         for (TreeNode child : children) {
             if (child.pathElement instanceof SplatParameterElement) {
                 return child;

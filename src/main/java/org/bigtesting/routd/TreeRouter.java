@@ -44,7 +44,7 @@ public class TreeRouter implements Router {
         TreeNode currentNode = root;
         for (PathElement elem : pathElements) {
             
-            TreeNode matchingNode = getMatchingNode(elem, currentNode.getChildren());
+            TreeNode matchingNode = currentNode.getMatchingChild(elem);
             if (matchingNode == null) {
                 TreeNode newChild = new TreeNode(elem);
                 currentNode.addChild(newChild);
@@ -54,14 +54,6 @@ public class TreeRouter implements Router {
             }
         }
         currentNode.setRoute(route);
-    }
-    
-    private TreeNode getMatchingNode(PathElement elem, List<TreeNode> nodes) {
-        
-        for (TreeNode node : nodes) {
-            if (node.matches(elem)) return node;
-        }
-        return null;
     }
     
     public Route route(String path) {
@@ -76,8 +68,7 @@ public class TreeRouter implements Router {
         TreeNode currentMatchingNode = root;
         for (String token : searchTokens) {
             
-            TreeNode matchingNode = 
-                    getFirstMatchingNode(token, currentMatchingNode.getChildren());
+            TreeNode matchingNode = currentMatchingNode.getMatchingChild(token);
             if (matchingNode == null) return null;
             currentMatchingNode = matchingNode;
             
@@ -88,14 +79,6 @@ public class TreeRouter implements Router {
         }
         
         return currentMatchingNode.getRoute();
-    }
-    
-    private TreeNode getFirstMatchingNode(String token, List<TreeNode> nodes) {
-        
-        for (TreeNode node : nodes) {
-            if (node.matches(token)) return node;
-        }
-        return null;
     }
     
     private List<String> getPathAsSearchTokens(String path) {
