@@ -510,6 +510,18 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
     }
     
     @Test
+    public void multipleSimilarRoutesMatchSplatBeforeNamed() {
+        
+        Route r1  = new Route("/abc/*/def");
+        Route r2  = new Route("/abc/:name/def");
+        
+        router.add(r2);
+        router.add(r1);
+        
+        assertEquals(r1, router.route("/abc/123/def"));
+    }
+    
+    @Test
     public void multipleRoutesResultInProperlySortedChildren() {
         
         Route r1  = new Route("/");

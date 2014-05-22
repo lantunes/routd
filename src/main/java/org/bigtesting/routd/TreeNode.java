@@ -93,8 +93,8 @@ public class TreeNode {
     
     public void addChild(TreeNode node) {
         
-        this.children.add(node);
-        Collections.sort(this.children, treeNodeComparator);
+        children.add(node);
+        Collections.sort(children, treeNodeComparator);
     }
     
     public List<TreeNode> getChildren() {
