@@ -2,8 +2,8 @@
 ------
 
 Routd is a small and simple URL routing library for Java. It is currently not trie-based, 
-and may not be as performant as trie-based implementations. However, it should be sufficient
-for most cases.
+and may not be as performant as trie-based implementations. However, it does contain a
+tree-based implementation, which should be sufficient for most cases.
 
 ## Getting Started
 ------------------
@@ -15,14 +15,14 @@ Or, add the following dependency to your pom.xml:
 <dependency>
     <groupId>org.bigtesting</groupId>
     <artifactId>routd</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
 ## Usage
 -----------
 
-There are two classes of interest in the Routd library: **Route** and **RouteMap**.
+There are two classes of interest in the Routd library: **Route** and **Router**.
 
 First, you create Routes:
 
@@ -30,51 +30,62 @@ First, you create Routes:
 Route r1 = new Route("/");
 Route r2 = new Route("/client/:name");
 Route r3 = new Route("/customer/:id<[0-9]+>");
+Route r4 = new Route("/user/*/account");
 ```
 
-...and add them to a RouteMap:
+...and add them to a Router:
 
 ```java
-RouteMap rm = new RegexRouteMap();
-rm.add(r1);
-rm.add(r2);
-rm.add(r3);
+Router router = new TreeRouter();
+router.add(r1);
+router.add(r2);
+router.add(r3);
+router.add(r4);
 ```
 
 Then you can retrieve the routes:
 
 ```java
-assertEquals(r1, rm.getRoute("/"));
-assertEquals(r2, rm.getRoute("/client/Tim"));
-assertEquals(r3, rm.getRoute("/customer/123"));
+assertEquals(r1, router.route("/"));
+assertEquals(r2, router.route("/client/Tim"));
+assertEquals(r3, router.route("/customer/123"));
+assertEquals(r4, router.route("/user/john/account"));
 ```
 
 With the routes, you can get the parameter values from a path:
 
 ```java
-Route route = new Route("/customer/:id/named/:name");
-String path = "/customer/1/named/John";
+Route route = new Route("/customer/:id/named/:name/*");
+String path = "/customer/1/named/John/Doe";
 
-assertEquals("1", route.getPathParameter("id", path));
-assertEquals("John", route.getPathParameter("name", path));
-assertNull(route.getPathParameter("blah", path));
+assertEquals("1", route.getNamedParameter("id", path));
+assertEquals("John", route.getNamedParameter("name", path));
+assertNull(route.getNamedParameter("blah", path));
+assertEquals("Doe", route.splat(path)[0]);
 ```
 
 ...and you can also get the path parameter elements directly:
 
 ```java
-Route route = new Route("/customer/:id<[0-9]+>/named/:name");
+Route route = new Route("/customer/:id<[0-9]+>/named/:name/*");
 
-List<PathParameterElement> params = route.pathParameterElements();
-assertEquals(2, params.size());
+List<PathElement> elements = route.getPathElements();
+assertEquals(5, elements.size());
 
-PathParameterElement elem = params.get(0);
-assertEquals("id", elem.name());
-assertEquals(1, elem.index());
-assertEquals("[0-9]+", elem.regex());
+StaticPathElement firstStaticElement = (StaticPathElement)elements.get(0);
+assertEquals("customer", firstStaticElement.name());
+assertEquals(0, firstStaticElement.index());
 
-elem = params.get(1);
-assertEquals("name", elem.name());
-assertEquals(3, elem.index());
-assertNull(elem.regex());
+NamedParameterElement firstNamedElement = (NamedParameterElement)elements.get(1);
+assertEquals("id", firstNamedElement.name());
+assertEquals(1, firstNamedElement.index());
+assertEquals("[0-9]+", firstNamedElement.regex());
+
+NamedParameterElement secondNamedElement = (NamedParameterElement)elements.get(3);
+assertEquals("name", secondNamedElement.name());
+assertEquals(3, secondNamedElement.index());
+assertNull(secondNamedElement.regex());
+
+SplatParameterElement splatElement = (SplatParameterElement)elements.get(4);
+assertEquals(4, splatElement.index());
 ```
