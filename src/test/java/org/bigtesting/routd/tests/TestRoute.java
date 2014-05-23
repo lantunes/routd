@@ -273,6 +273,24 @@ public class TestRoute {
     }
     
     @Test
+    public void getNamedParameter_HandlesUnicodeCorrectly() {
+        
+        Route route = new Route("/customer/:id");
+        String path = "/customer/f%C3%B6%C3%B6";
+        
+        assertEquals("föö", route.getNamedParameter("id", path));
+    }
+    
+    @Test
+    public void getNamedParameter_HandlesEncodedSlashesCorrectly() {
+        
+        Route route = new Route("/:test");
+        String path = "/foo%2Fbar";
+        
+        assertEquals("foo/bar", route.getNamedParameter("test", path));
+    }
+    
+    @Test
     public void getNamedParameter_WithMultipleParameters() {
         
         Route route = new Route("/customer/:id/named/:name");
@@ -483,6 +501,26 @@ public class TestRoute {
     }
     
     @Test
+    public void splat_HandlesEncodedSlashesCorrectly() {
+        
+        Route route = new Route("/*");
+        
+        String path = "/foo%2Fbar";
+        assertEquals(1, route.splat(path).length);
+        assertEquals("foo/bar", route.splat(path)[0]);
+    }
+    
+    @Test
+    public void splat_HandlesUnicodeCorrectly() {
+        
+        Route route = new Route("/*");
+        
+        String path = "/f%C3%B6%C3%B6";
+        assertEquals(1, route.splat(path).length);
+        assertEquals("föö", route.splat(path)[0]);
+    }
+    
+    @Test
     public void splat_WithPrecedingResource() {
         
         Route route = new Route("/protected/*");
@@ -569,5 +607,37 @@ public class TestRoute {
         assertEquals("[0-9]+", elem.regex());
         assertEquals("Tim", route.getNamedParameter("name", path));
         assertEquals("1", route.getNamedParameter("times", path));
+    }
+    
+    @Test
+    public void urlDecodesNamedParametersAndSplats() {
+     
+        Route route = new Route("/:foo/*");
+        
+        String path = "/hello%20world/how%20are%20you";
+        
+        assertEquals("hello world", route.getNamedParameter("foo", path));
+        assertEquals(1, route.splat(path).length);
+        assertEquals("how are you", route.splat(path)[0]);
+    }
+    
+    @Test
+    public void doesNotCovertPlusSignIntoSpaceAsTheValueOfANamedParam() {
+        
+        Route route = new Route("/:test");
+        
+        String path = "/bob+ross";
+        
+        assertEquals("bob+ross", route.getNamedParameter("test", path));
+    }
+    
+    @Test
+    public void doesNotCovertPlusSignIntoSpaceAsTheValueOfASplatParam() {
+        
+        Route route = new Route("/hello/*");
+        
+        String path = "/hello/bob+ross";
+        
+        assertEquals("bob+ross", route.splat(path)[0]);
     }
 }

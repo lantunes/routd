@@ -289,4 +289,114 @@ public abstract class RouterContractTest<R extends Router> {
         
         assertEquals(r, router.route("/hello$.html"));
     }
+    
+    @Test
+    public void route_AllowsUsingUnicode() throws Exception {
+        
+        Route r = new Route("/föö");
+        
+        router.add(r);
+        
+        assertEquals(r, router.route("/f%C3%B6%C3%B6"));
+    }
+    
+    @Test
+    public void route_HandlesEncodedSlashedCorrectly() throws Exception {
+        
+        Route r = new Route("/foo/bar");
+        
+        router.add(r);
+        
+        assertEquals(r, router.route("/foo%2Fbar"));
+    }
+    
+    @Test
+    public void route_HandlesEncodedSlashedCorrectlyWithNamedParam() throws Exception {
+        
+        Route r = new Route("/:test");
+        
+        router.add(r);
+        
+        assertEquals(r, router.route("/foo%2Fbar"));
+    }
+    
+    @Test
+    public void route_LiterallyMatchesPlusSignInPath() throws Exception {
+        
+        Route r = new Route("/foo+bar");
+        
+        router.add(r);
+        
+        assertEquals(r, router.route("/foo%2Bbar"));
+    }
+    
+    @Test
+    public void route_LiterallyMatchesDollarSignInPath() throws Exception {
+        
+        Route r = new Route("/test$/");
+        
+        router.add(r);
+        
+        assertEquals(r, router.route("/test$/"));
+    }
+    
+    @Test
+    public void route_LiterallyMatchesDotInPath() throws Exception {
+        
+        Route r = new Route("/test.bar");
+        
+        router.add(r);
+        
+        assertEquals(r, router.route("/test.bar"));
+    }
+    
+    @Test
+    public void route_MatchesPathsThatIncludeSpacesEncodedWithPercent20() throws Exception {
+        
+        Route r = new Route("/path with spaces");
+        
+        router.add(r);
+        
+        assertEquals(r, router.route("/path%20with%20spaces"));
+    }
+    
+    @Test
+    public void route_MatchesPathsThatIncludeSpacesEncodedWithPlus() throws Exception {
+        
+        Route r = new Route("/path with spaces");
+        
+        router.add(r);
+        
+        assertEquals(r, router.route("/path+with+spaces"));
+    }
+    
+    @Test
+    public void route_MatchesPathsThatIncludeAmpersands() throws Exception {
+        
+        Route r = new Route("/:name");
+        
+        router.add(r);
+        
+        assertEquals(r, router.route("/foo&bar"));
+    }
+    
+    @Test
+    public void route_MatchesADotAsPartOfANamedParam() throws Exception {
+        
+        Route r = new Route("/:foo/:bar");
+        
+        router.add(r);
+        
+        assertEquals(r, router.route("/user@example.com/name"));
+    }
+    
+    @Test
+    public void route_LiterallyMatchesParensInPath() throws Exception {
+        
+        Route r = new Route("/test(bar)/");
+        
+        router.add(r);
+        
+        assertEquals(r, router.route("/test(bar)/"));
+    }
 }

@@ -15,6 +15,8 @@
  */
 package org.bigtesting.routd;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.Arrays;
@@ -53,8 +55,18 @@ public class RouteHelper {
     public static String[] getPathElements(String path) {
         if (path == null) throw new IllegalArgumentException("path cannot be null");
         path = path.trim();
+        path = decodePath(path);
         if (path.length() == 0) throw new IllegalArgumentException("path cannot be empty");
         return path.substring(1).split(PATH_ELEMENT_SEPARATOR);
+    }
+    
+    public static String decodePath(String path) {
+        
+        try {
+            return URLDecoder.decode(path, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("could not decode path: " + path, e);
+        }
     }
     
     public static String escapeNonCustomRegex(String path) {
