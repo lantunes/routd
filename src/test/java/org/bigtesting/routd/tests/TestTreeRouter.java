@@ -17,24 +17,26 @@ package org.bigtesting.routd.tests;
 
 import static org.junit.Assert.*;
 
+import org.bigtesting.It;
+import org.bigtesting.ItRunner;
 import org.bigtesting.routd.Route;
 import org.bigtesting.routd.TreeNode;
 import org.bigtesting.routd.TreeRouter;
-import org.junit.Test;
-
+import org.junit.runner.RunWith;
 
 /**
  * 
  * @author Luis Antunes
  */
+@RunWith(ItRunner.class)
 public class TestTreeRouter extends RouterContractTest<TreeRouter> {
     
     protected TreeRouter newRouter() {
         return new TreeRouter();
     }
     
-    @Test
-    public void singleRoute_RootPath() {
+    @It("produces the correct tree when given the root route")
+    void treeTest1() {
         
         Route r = new Route("/");
         
@@ -50,8 +52,9 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertNull(router.route("/blah"));
     }
     
-    @Test
-    public void singleRoute_StaticSingleElementPath() {
+    @It("produces the correct tree when given a single route " +
+    		"with a single static path element")
+    void treeTest2() {
         
         Route r = new Route("/hello");
         
@@ -72,8 +75,8 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertNull(router.route("/blah"));
     }
     
-    @Test
-    public void addingTheSameRouteTwiceHasNoEffect() {
+    @It("produces the correct tree when given the same route twice")
+    void treeTest3() {
         
         Route r1 = new Route("/hello");
         Route r2 = new Route("/hello");
@@ -96,8 +99,9 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertNull(router.route("/blah"));
     }
     
-    @Test
-    public void singleRoute_StaticSingleElementPathEndsWithSeparator() {
+    @It("produces the correct tree when given a single route with a " +
+    		"single static path element ending with a path separator")
+    void treeTest4() {
         
         Route r = new Route("/hello/");
         
@@ -124,8 +128,9 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertNull(router.route("/blah"));
     }
     
-    @Test
-    public void singleRoute_StaticSingleElementPathWithRegexSymbol() {
+    @It("produces the correct tree when given a single route with a " +
+    		"single static path element with a regex symbol")
+    void treeTest5() {
         
         Route r = new Route("/hello$.html");
         
@@ -146,8 +151,9 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertNull(router.route("/blah"));
     }
     
-    @Test
-    public void multipleRoutes_StaticSingleElementPath() {
+    @It("produces the correct tree when given the root route and a " +
+    		"route with a single static path element")
+    void treeTest6() {
         
         Route r1 = new Route("/");
         Route r2 = new Route("/hello");
@@ -170,8 +176,9 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertNull(router.route("/blah"));
     }
     
-    @Test
-    public void multipleRoutes_StaticMultipleElementPath() {
+    @It("produces the correct tree when given multiple routes " +
+    		"with static path elements")
+    void treeTest7() {
 
         Route r1 = new Route("/");
         Route r2 = new Route("/hello");
@@ -212,8 +219,9 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertNull(router.route("/hello/world/"));
     }
     
-    @Test
-    public void singleRoute_NamedSingleElementPath() {
+    @It("produces the correct tree when given a sigle route with a " +
+    		"single named path element")
+    void treeTest8() {
         
         Route r1 = new Route("/:name");
         
@@ -235,8 +243,9 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertNull(router.route("/john/"));
     }
     
-    @Test
-    public void singleRoute_NamedMultipleElementPath() {
+    @It("produces the correct tree when given a single route with " +
+    		"multiple named path elements")
+    void treeTest9() {
         
         Route r1 = new Route("/:name/:id");
         
@@ -264,8 +273,9 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertNull(router.route("/john/doe/"));
     }
     
-    @Test
-    public void singleRoute_NamedCustomRegexSingleElementPath() {
+    @It("produces the correct tree when given a single route with " +
+            "a single named parameter with custom regex")
+    void treeTest10() {
         
         Route r1 = new Route("/:id<[0-9]+>");
         
@@ -287,8 +297,9 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertNull(router.route("/123/"));
     }
     
-    @Test
-    public void multipleRoutes_DifferentCustomRegexWithSameNames() {
+    @It("produces the correct tree when given multiples routes with " +
+            "multiple elements with a named parameter with custom regex")
+    void treeTest11() {
         
         Route r1 = new Route("/cntrl/actn/:id<[0-9]+>");
         Route r2 = new Route("/cntrl/actn/:id<[a-z]+>");
@@ -327,8 +338,9 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertNull(router.route("/cntrl/actn/bob/"));
     }
     
-    @Test
-    public void singleRoute_SplatSingleElementPath() {
+    @It("produces the correct tree when given a single route with " +
+    		"a splat that matches all paths")
+    void treeTest12() {
         
         Route r1 = new Route("/*");
         
@@ -350,8 +362,9 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertEquals(r1, router.route("/123/"));
     }
     
-    @Test
-    public void twoRoutes_SplatSingleElementPath() {
+    @It("produces the correct tree when given a single route with " +
+            "a splat that matches all paths, and the root route")
+    void treeTest13() {
         
         Route r0 = new Route("/");
         Route r1 = new Route("/*");
@@ -375,8 +388,9 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertEquals(r1, router.route("/123/"));
     }
     
-    @Test
-    public void singleRoute_SplatWithPrecedingStaticElement() {
+    @It("produces the correct tree when given a single route with " +
+            "a splat with a preceding static element")
+    void treeTest14() {
         
         Route r1 = new Route("/protected/*");
         
@@ -402,8 +416,9 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertEquals(r1, router.route("/protected/"));
     }
     
-    @Test
-    public void multipleRoutes_SplatWithPrecedingStaticElement() {
+    @It("produces the correct tree when given multiple routes, one with " +
+            "a splat with a preceding static element")
+    void treeTest15() {
         
         Route r1 = new Route("/protected/*");
         Route r2 = new Route("/protected/:id<[0-9]+>");
@@ -444,8 +459,9 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertEquals(r1, router.route("/protected/"));
     }
     
-    @Test
-    public void singleRoute_SplatMultipleElementPath() {
+    @It("produces the correct tree when given a single route with " +
+            "multiple splat elements")
+    void treeTest16() {
         
         Route r1 = new Route("/say/*/to/*");
         
@@ -485,8 +501,9 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertEquals(r1, router.route("/say/hello/to/"));
     }
     
-    @Test
-    public void multipleSimilarRoutesMatchSplatBeforeStatic() {
+    @It("matches a similar route containing a splat before the " +
+    		"route containing the static element")
+    void treeTest17() {
         
         Route r1  = new Route("/abc/*/def");
         Route r2  = new Route("/abc/123/def");
@@ -497,8 +514,9 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertEquals(r1, router.route("/abc/123/def"));
     }
     
-    @Test
-    public void multipleSimilarRoutesMatchStaticBeforeNamed() {
+    @It("matches a similar route containing a static element before the " +
+            "route containing the named parameter")
+    void treeTest18() {
         
         Route r1  = new Route("/abc/123/def");
         Route r2  = new Route("/abc/:name/def");
@@ -509,8 +527,9 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertEquals(r1, router.route("/abc/123/def"));
     }
     
-    @Test
-    public void multipleSimilarRoutesMatchSplatBeforeNamed() {
+    @It("matches a similar route containing a splat before the " +
+            "route containing the named parameter")
+    void treeTest19() {
         
         Route r1  = new Route("/abc/*/def");
         Route r2  = new Route("/abc/:name/def");
@@ -521,8 +540,8 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertEquals(r1, router.route("/abc/123/def"));
     }
     
-    @Test
-    public void multipleRoutesResultInProperlySortedChildren() {
+    @It("produces a tree with multiple routes with children sorted properly")
+    void treeTest20() {
         
         Route r1  = new Route("/");
         Route r2  = new Route("/*");

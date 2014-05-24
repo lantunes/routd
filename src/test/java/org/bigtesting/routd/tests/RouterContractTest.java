@@ -17,15 +17,18 @@ package org.bigtesting.routd.tests;
 
 import static org.junit.Assert.*;
 
+import org.bigtesting.It;
+import org.bigtesting.ItRunner;
 import org.bigtesting.routd.Route;
 import org.bigtesting.routd.Router;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * 
  * @author Luis Antunes
  */
+@RunWith(ItRunner.class)
 public abstract class RouterContractTest<R extends Router> {
     
     protected R router;
@@ -38,8 +41,7 @@ public abstract class RouterContractTest<R extends Router> {
     
     protected abstract R newRouter();
     
-    @Test
-    public void route_Root() {
+    @It("matches the root route") void routeTest1() {
         
         Route r1 = new Route("/");
         
@@ -48,8 +50,8 @@ public abstract class RouterContractTest<R extends Router> {
         assertEquals(r1, router.route("/"));
     }
     
-    @Test
-    public void route_SimilarMatchesConstant() {
+    @It("distinguishes between similar static and named param routes; case 1")
+    void routeTest2() {
         
         Route r1 = new Route("/clients/all");
         Route r2 = new Route("/clients/:id");
@@ -60,8 +62,8 @@ public abstract class RouterContractTest<R extends Router> {
         assertEquals(r1, router.route("/clients/all"));
     }
     
-    @Test
-    public void route_SimilarMatchesParam() {
+    @It("distinguishes between similar static and named param routes; case 2")
+    void routeTest3() {
         
         Route r1 = new Route("/clients/all");
         Route r2 = new Route("/clients/:id");
@@ -72,8 +74,8 @@ public abstract class RouterContractTest<R extends Router> {
         assertEquals(r2, router.route("/clients/123"));
     }
     
-    @Test
-    public void route_IgnoresParamRegion() {
+    @It("distinguishes between dissimilar static and named param routes; case 1")
+    void routeTest4() {
         
         Route r1 = new Route("/cntrl");
         Route r2 = new Route("/cntrl/clients/:id");
@@ -84,8 +86,8 @@ public abstract class RouterContractTest<R extends Router> {
         assertEquals(r1, router.route("/cntrl"));
     }
     
-    @Test
-    public void route_FindsParamRegion() {
+    @It("distinguishes between dissimilar static and named param routes; case 2") 
+    void routeTest5() {
         
         Route r1 = new Route("/cntrl");
         Route r2 = new Route("/cntrl/clients/:id");
@@ -96,8 +98,7 @@ public abstract class RouterContractTest<R extends Router> {
         assertEquals(r2, router.route("/cntrl/clients/23455"));
     }
     
-    @Test
-    public void route_DistinguishesBetweenDifferentRoutes() {
+    @It("distinguishes between two different static routes") void routeTest6() {
         
         Route r1 = new Route("/cntrl");
         Route r2 = new Route("/actn");
@@ -108,8 +109,7 @@ public abstract class RouterContractTest<R extends Router> {
         assertEquals(r2, router.route("/actn"));
     }
     
-    @Test
-    public void route_NotFound() {
+    @It("returns null when no route is found") void routeTest7() {
         
         Route r1 = new Route("/cntrl");
         Route r2 = new Route("/actn");
@@ -120,8 +120,8 @@ public abstract class RouterContractTest<R extends Router> {
         assertNull(router.route("/test"));
     }
     
-    @Test
-    public void route_MultiParamRegions_Multiple() {
+    @It("distinguishes between routes with multiple named path parameters; case 1")
+    void routeTest8() {
         
         Route r1 = new Route("/cntrl/actn/:id");
         Route r2 = new Route("/cntrl/actn/:id/:name");
@@ -131,9 +131,9 @@ public abstract class RouterContractTest<R extends Router> {
         
         assertEquals(r2, router.route("/cntrl/actn/123/bob"));
     }
-    
-    @Test
-    public void route_MultiParamRegions_Single() {
+
+    @It("distinguishes between routes with multiple named path parameters; case 2")
+    void routeTest9() {
         
         Route r1 = new Route("/cntrl/actn/:id");
         Route r2 = new Route("/cntrl/actn/:id/:name");
@@ -144,8 +144,8 @@ public abstract class RouterContractTest<R extends Router> {
         assertEquals(r1, router.route("/cntrl/actn/123"));
     }
     
-    @Test
-    public void route_CustomRegexAlpha() {
+    @It("distinguishes between named parameters with custom regex; alpha case")
+    void routeTest10() {
         
         Route r1 = new Route("/cntrl/actn/:id<[0-9]+>");
         Route r2 = new Route("/cntrl/actn/:id<[a-z]+>");
@@ -157,8 +157,8 @@ public abstract class RouterContractTest<R extends Router> {
         assertNull(router.route("/cntrl/actn/bob/"));
     }
     
-    @Test
-    public void route_CustomRegexNumeric() {
+    @It("distinguishes between named parameters with custom regex; numeric case")
+    void routeTest11() {
         
         Route r1 = new Route("/cntrl/actn/:id<[0-9]+>");
         Route r2 = new Route("/cntrl/actn/:id<[a-z]+>");
@@ -170,8 +170,8 @@ public abstract class RouterContractTest<R extends Router> {
         assertNull(router.route("/cntrl/actn/123/"));
     }
     
-    @Test
-    public void route_DoesNotMatchWithExtraPathElementAfter() {
+    @It("matches a named parameter, but not if there is an extra path element after it")
+    void routetest12() {
         
         Route r1 = new Route("/cntrl/:name");
         
@@ -181,8 +181,8 @@ public abstract class RouterContractTest<R extends Router> {
         assertNull(router.route("/cntrl/Tim/blah"));
     }
     
-    @Test
-    public void route_SplatPathParameterForAllRequests() throws Exception {
+    @It("handles the splat path parameter for all requests") 
+    void routeTest13() {
         
         Route r1 = new Route("/*");
         Route r2 = new Route("/specific");
@@ -202,8 +202,8 @@ public abstract class RouterContractTest<R extends Router> {
         assertEquals(r1, router.route("/hello/"));
     }
     
-    @Test
-    public void route_SplatPathParameterForAllRequestsWithRootRoute() throws Exception {
+    @It("handles splat parameter for all requests with root route present")
+    void routetest14() {
         
         Route r0 = new Route("/");
         Route r1 = new Route("/*");
@@ -215,8 +215,7 @@ public abstract class RouterContractTest<R extends Router> {
         assertEquals(r1, router.route("/blah"));
     }
     
-    @Test
-    public void route_SplatPathParameterWithPrecedingResource() throws Exception {
+    @It("handles splat parameters with a preceding resource") void routeTest15() {
         
         Route r1 = new Route("/protected/*");
         Route r2 = new Route("/protected/:id<[0-9]+>");
@@ -232,8 +231,7 @@ public abstract class RouterContractTest<R extends Router> {
         assertEquals(r1, router.route("/protected/"));
     }
     
-    @Test
-    public void route_SplatPathParameterInterjectedBetweenResources() throws Exception {
+    @It("handles splat parameters interjected between resources") void routetest16() {
         
         Route r1 = new Route("/protected/*/content");
         Route r2 = new Route("/protected/user/content");
@@ -249,8 +247,8 @@ public abstract class RouterContractTest<R extends Router> {
         assertEquals(r1, router.route("/protected/user/content"));
     }
     
-    @Test
-    public void route_SplatPathParametersOccurringMultipleTimes() throws Exception {
+    @It("handles paths with splat parameters occurring multiple times") 
+    void routeTest17() {
         
         Route r1 = new Route("/say/*/to/*");
         
@@ -265,8 +263,8 @@ public abstract class RouterContractTest<R extends Router> {
         assertEquals(r1, router.route("/say/hello/to/"));
     }
     
-    @Test
-    public void route_SplatPathParamsWithVariousPathParams() throws Exception {
+    @It("handles splat path params that are part of paths with various path params")
+    void routeTest18() {
         
         Route r1 = new Route("/say/*/to/:name/:times<[0-9]+>/*");
         
@@ -280,123 +278,87 @@ public abstract class RouterContractTest<R extends Router> {
         assertEquals(r1, router.route("/say/hello/to/Tim/1/time/thanks"));
     }
     
-    @Test
-    public void route_PathContainsRegexSymbols() throws Exception {
+    @It("handles paths containing regex symbols") void routeTest19() {
         
         Route r = new Route("/hello$.html");
-        
         router.add(r);
-        
         assertEquals(r, router.route("/hello$.html"));
     }
     
-    @Test
-    public void route_AllowsUsingUnicode() throws Exception {
+    @It("allows using unicode") void routeTest20() {
         
         Route r = new Route("/föö");
-        
         router.add(r);
-        
         assertEquals(r, router.route("/f%C3%B6%C3%B6"));
     }
     
-    @Test
-    public void route_HandlesEncodedSlashedCorrectly() throws Exception {
+    @It("handles encoded '/' correctly") void routeTest21() {
         
         Route r = new Route("/foo/bar");
-        
         router.add(r);
-        
         assertEquals(r, router.route("/foo%2Fbar"));
     }
     
-    @Test
-    public void route_HandlesEncodedSlashedCorrectlyWithNamedParam() throws Exception {
+    @It("handles encoded '/' correctly with named params") void routeTest22() {
         
         Route r = new Route("/:test");
-        
         router.add(r);
-        
         assertEquals(r, router.route("/foo%2Fbar"));
     }
     
-    @Test
-    public void route_LiterallyMatchesPlusSignInPath() throws Exception {
+    @It("literally matches '+' in path") void routeTest23() {
         
         Route r = new Route("/foo+bar");
-        
         router.add(r);
-        
         assertEquals(r, router.route("/foo%2Bbar"));
     }
     
-    @Test
-    public void route_LiterallyMatchesDollarSignInPath() throws Exception {
+    @It("literally matches '$' in path") void routeTest24() {
         
         Route r = new Route("/test$/");
-        
         router.add(r);
-        
         assertEquals(r, router.route("/test$/"));
     }
     
-    @Test
-    public void route_LiterallyMatchesDotInPath() throws Exception {
+    @It("literally matches '.' in path") void routeTest25() {
         
         Route r = new Route("/test.bar");
-        
         router.add(r);
-        
         assertEquals(r, router.route("/test.bar"));
     }
     
-    @Test
-    public void route_MatchesPathsThatIncludeSpacesEncodedWithPercent20() throws Exception {
+    @It("matches paths that include spaces encoded with '%20'") void routeTest26() {
         
         Route r = new Route("/path with spaces");
-        
         router.add(r);
-        
         assertEquals(r, router.route("/path%20with%20spaces"));
     }
     
-    @Test
-    public void route_MatchesPathsThatIncludeSpacesEncodedWithPlus() throws Exception {
+    @It("matches paths that include spaces encoded with '+'") void routeTest27() {
         
         Route r = new Route("/path with spaces");
-        
         router.add(r);
-        
         assertEquals(r, router.route("/path+with+spaces"));
     }
     
-    @Test
-    public void route_MatchesPathsThatIncludeAmpersands() throws Exception {
+    @It("matches paths that include ampersands") void routeTest28() {
         
         Route r = new Route("/:name");
-        
         router.add(r);
-        
         assertEquals(r, router.route("/foo&bar"));
     }
     
-    @Test
-    public void route_MatchesADotAsPartOfANamedParam() throws Exception {
+    @It("matches a dot as part of a named param") void routeTest29() {
         
         Route r = new Route("/:foo/:bar");
-        
         router.add(r);
-        
         assertEquals(r, router.route("/user@example.com/name"));
     }
     
-    @Test
-    public void route_LiterallyMatchesParensInPath() throws Exception {
+    @It("literally matches parens in path") void routeTest30() {
         
         Route r = new Route("/test(bar)/");
-        
         router.add(r);
-        
         assertEquals(r, router.route("/test(bar)/"));
     }
 }
