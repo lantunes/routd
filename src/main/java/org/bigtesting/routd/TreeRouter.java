@@ -88,7 +88,12 @@ public class TreeRouter implements Router {
         for (int i = 0; i < pathElements.length; i++) {
             String token = pathElements[i];
             if (token != null && token.trim().length() > 0) {
-                tokens.add(token);
+                String decodedToken = urlDecode(token, false);
+                if (decodedToken.contains(PATH_ELEMENT_SEPARATOR)) {
+                    tokens.addAll(getPathAsSearchTokens(decodedToken));
+                } else {
+                    tokens.add(decodedToken);
+                }
             }
         }        
         if (!tokens.isEmpty() && 

@@ -55,17 +55,23 @@ public class RouteHelper {
     public static String[] getPathElements(String path) {
         if (path == null) throw new IllegalArgumentException("path cannot be null");
         path = path.trim();
-        path = decodePath(path);
         if (path.length() == 0) throw new IllegalArgumentException("path cannot be empty");
-        return path.substring(1).split(PATH_ELEMENT_SEPARATOR);
+        path = path.startsWith(PATH_ELEMENT_SEPARATOR) ? path.substring(1) : path;        
+        return path.split(PATH_ELEMENT_SEPARATOR);
     }
     
-    public static String decodePath(String path) {
-        
+    public static String urlDecode(String s) {
+        return urlDecode(s, true);
+    }
+    
+    public static String urlDecode(String s, boolean replaceLiteralPlus) {
         try {
-            return URLDecoder.decode(path, "UTF-8");
+            if (replaceLiteralPlus) {
+                s = s.replaceAll("\\+", "%2b");
+            }
+            return URLDecoder.decode(s, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("could not decode path: " + path, e);
+            throw new RuntimeException("could not URL decode string: " + s, e);
         }
     }
     

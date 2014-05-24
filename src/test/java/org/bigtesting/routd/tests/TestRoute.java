@@ -291,6 +291,15 @@ public class TestRoute {
     }
     
     @Test
+    public void getNamedParameter_HandlesEncodedSlashesCorrectlyWhenInterjected() {
+        
+        Route route = new Route("/hello/:test/there");
+        String path = "/hello/foo%2Fbar/there";
+        
+        assertEquals("foo/bar", route.getNamedParameter("test", path));
+    }
+    
+    @Test
     public void getNamedParameter_WithMultipleParameters() {
         
         Route route = new Route("/customer/:id/named/:name");
@@ -511,6 +520,16 @@ public class TestRoute {
     }
     
     @Test
+    public void splat_HandlesEncodedSlashesCorrectlyWhenInterjected() {
+        
+        Route route = new Route("/hello/*/there");
+        
+        String path = "/hello/foo%2Fbar/there";
+        assertEquals(1, route.splat(path).length);
+        assertEquals("foo/bar", route.splat(path)[0]);
+    }
+    
+    @Test
     public void splat_HandlesUnicodeCorrectly() {
         
         Route route = new Route("/*");
@@ -639,5 +658,33 @@ public class TestRoute {
         String path = "/hello/bob+ross";
         
         assertEquals("bob+ross", route.splat(path)[0]);
+    }
+    
+    @Test
+    public void hasPathElementsReturnsTrueIfItDoes() {
+        
+        Route route = new Route("/hello/*");
+        assertTrue(route.hasPathElements());
+    }
+    
+    @Test
+    public void hasPathElementsReturnsTrueIfItDoesWithJustASplat() {
+        
+        Route route = new Route("/*");
+        assertTrue(route.hasPathElements());
+    }
+    
+    @Test
+    public void hasPathElementsReturnsTrueIfItDoesWithJustANamedParameter() {
+        
+        Route route = new Route("/:named");
+        assertTrue(route.hasPathElements());
+    }
+    
+    @Test
+    public void hasPathElementsReturnsFalseIfItDoesNot() {
+        
+        Route route = new Route("/");
+        assertFalse(route.hasPathElements());
     }
 }

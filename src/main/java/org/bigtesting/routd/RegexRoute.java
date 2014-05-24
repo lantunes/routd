@@ -79,6 +79,9 @@ public class RegexRoute {
             }
         }
         
+        if (route.hasPathElements() && route.endsWithPathSeparator()) {
+            routeRegex.append(PATH_ELEMENT_SEPARATOR);
+        }
         routeRegex.append("$");
         return Pattern.compile(routeRegex.toString());
     }

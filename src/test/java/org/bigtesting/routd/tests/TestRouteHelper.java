@@ -19,45 +19,64 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
+import org.bigtesting.It;
+import org.bigtesting.ItRunner;
 import org.bigtesting.routd.RouteHelper;
-import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * 
  * @author Luis Antunes
  */
+@RunWith(ItRunner.class)
 public class TestRouteHelper {
 
-    @Test
-    public void getPathElements_NoController_NoAction_NoParamPath() {
+    @It("returns an empty string if given a path with just '/'")
+    void getPathElementsTest1() {
+        
         String[] expected = new String[]{""};
         String[] actual = RouteHelper.getPathElements("/");
         assertTrue(Arrays.equals(expected, actual));
     }
     
-    @Test
-    public void getPathElements_WithController_WithAction_WithParamPath() {
+    @It("returns the correct strings if given a path with multiple " +
+    		"static elements and a named parameter")
+    void getPathElementsTest2() {
+        
         String[] expected = new String[]{"cntrl","actn","clients",":id"};
         String[] actual = RouteHelper.getPathElements("/cntrl/actn/clients/:id");
         assertTrue(Arrays.equals(expected, actual));
     }
     
-    @Test
-    public void getPathElements_NoController_NoAction_WithParamPath() {
+    @It("returns the correct strings even if the path does not start with '/'")
+    void getPathElementsTest2b() {
+        
+        String[] expected = new String[]{"cntrl","actn","clients",":id"};
+        String[] actual = RouteHelper.getPathElements("cntrl/actn/clients/:id");
+        assertTrue(Arrays.equals(expected, actual));
+    }
+    
+    @It("returns the correct strings if given a path with a single " +
+            "static element and a named parameter")
+    void getPathElementsTest3() {
+        
         String[] expected = new String[]{"clients",":id"};
         String[] actual = RouteHelper.getPathElements("/clients/:id");
         assertTrue(Arrays.equals(expected, actual));
     }
     
-    @Test
-    public void getPathElements_NoController_NoAction_WithParamPathWithRegex() {
+    @It("returns the correct strings if given a path with a single " +
+            "static element and a named parameter with custom regex")
+    void getPathElementsTest4() {
+        
         String[] expected = new String[]{"clients",":id<[0-9]+>"};
         String[] actual = RouteHelper.getPathElements("/clients/:id<[0-9]+>");
         assertTrue(Arrays.equals(expected, actual));
     }
     
-    @Test
-    public void escapeNonCustomRegex() {
+    @It("escapes non-custom regex")
+    void escapeNonCustomRegex() {
+        
         String path = "/cntrl/[](){}*^?$.\\/a+b/:id<[^/]+>/:name<[a-z]+>";
         String expected = 
                 "/cntrl/\\[\\]\\(\\)\\{\\}\\*\\^\\?\\$\\.\\\\/a\\+b/:id<[^/]+>/:name<[a-z]+>";

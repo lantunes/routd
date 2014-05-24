@@ -146,4 +146,12 @@ public class TestRegexRoute {
         String pattern = r.pattern().toString();
         assertEquals("^/say/([^/]*)/to/([^/]+)/([0-9]+)/(.*)$", pattern);
     }
+    
+    @Test
+    public void pattern_TrailingSlashInPathIsPreserved() {
+        
+        RegexRoute r = new RegexRoute(new Route("/test(bar)/"));
+        String pattern = r.pattern().toString();
+        assertEquals("^/test\\(bar\\)/$", pattern);
+    }
 }

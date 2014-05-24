@@ -306,6 +306,29 @@ public abstract class RouterContractTest<R extends Router> {
         assertEquals(r, router.route("/foo%2Fbar"));
     }
     
+    @It("handles encoded '/' correctly with splat") void routeTest22b() {
+        
+        Route r = new Route("/*");
+        router.add(r);
+        assertEquals(r, router.route("/foo%2Fbar"));
+    }
+    
+    @It("handles encoded '/' correctly with named params if " +
+    		"it is interjected between resources") void routeTest22c() {
+        
+        Route r = new Route("/hello/:test/there");
+        router.add(r);
+        assertEquals(r, router.route("/hello/foo%2Fbar/there"));
+    }
+    
+    @It("handles encoded '/' correctly with splat if " +
+            "it is interjected between resources") void routeTest22d() {
+        
+        Route r = new Route("/hello/*/there");
+        router.add(r);
+        assertEquals(r, router.route("/hello/foo%2Fbar/there"));
+    }
+    
     @It("literally matches '+' in path") void routeTest23() {
         
         Route r = new Route("/foo+bar");
