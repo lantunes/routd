@@ -89,3 +89,9 @@ assertNull(secondNamedElement.regex());
 SplatParameterElement splatElement = (SplatParameterElement)elements.get(4);
 assertEquals(4, splatElement.index());
 ```
+
+## Notes
+-----------
+
+Routers currently expect URL paths to be undecoded. That is, paths should retain any URL encodings.
+The router will handle any URL decoding required.
