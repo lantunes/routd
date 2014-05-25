@@ -34,7 +34,7 @@ public class RegexRouter implements Router {
     
     public Route route(String path) {
     
-        path = RouteHelper.urlDecode(path, false);
+        path = RouteHelper.urlDecodeForRouting(path);
         
         for (RegexRoute route : routes) {
             Matcher m = route.pattern().matcher(path);

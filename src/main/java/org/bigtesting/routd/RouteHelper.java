@@ -60,15 +60,18 @@ public class RouteHelper {
         return path.split(PATH_ELEMENT_SEPARATOR);
     }
     
-    public static String urlDecode(String s) {
-        return urlDecode(s, true);
+    public static String urlDecodeForPathParams(String s) {
+        s = s.replaceAll("\\+", "%2b");
+        return urlDecode(s);
     }
     
-    public static String urlDecode(String s, boolean replaceLiteralPlus) {
+    public static String urlDecodeForRouting(String s) {
+        s = s.replaceAll("%2f|%2F", "%252f");
+        return urlDecode(s);
+    }
+    
+    public static String urlDecode(String s) {
         try {
-            if (replaceLiteralPlus) {
-                s = s.replaceAll("\\+", "%2b");
-            }
             return URLDecoder.decode(s, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("could not URL decode string: " + s, e);

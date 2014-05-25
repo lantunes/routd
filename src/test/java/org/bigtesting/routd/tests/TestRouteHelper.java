@@ -83,4 +83,38 @@ public class TestRouteHelper {
         String actual = RouteHelper.escapeNonCustomRegex(path);
         assertEquals(expected, actual);
     }
+    
+    @It("url decodes for routing correctly") void urlDecodeForRoutingTest() {
+        
+        String path = "/hello";
+        assertEquals("/hello", RouteHelper.urlDecodeForRouting(path));
+        
+        path = "/hello/foo%2Fbar/there";
+        assertEquals("/hello/foo%2fbar/there", RouteHelper.urlDecodeForRouting(path));        
+                
+        path = "/hello/foo%2fbar/there";
+        assertEquals("/hello/foo%2fbar/there", RouteHelper.urlDecodeForRouting(path));
+        
+        path = "/hello/foo%2Fbar/there/foo%2Bbar/a+space";
+        assertEquals("/hello/foo%2fbar/there/foo+bar/a space", RouteHelper.urlDecodeForRouting(path));
+    }
+    
+    @It("url decodes for path params correctly") void urlDecodeForPathParamsTest() {
+        
+        String param = "hello";
+        assertEquals("hello", RouteHelper.urlDecodeForPathParams(param));
+        
+        param = "foo%2Fbar";
+        assertEquals("foo/bar", RouteHelper.urlDecodeForPathParams(param));        
+        
+        param = "foo+bar";
+        assertEquals("foo+bar", RouteHelper.urlDecodeForPathParams(param));
+        
+        param = "foo%2Bbar";
+        assertEquals("foo+bar", RouteHelper.urlDecodeForPathParams(param));
+        
+        param = "foo%20bar";
+        assertEquals("foo bar", RouteHelper.urlDecodeForPathParams(param));
+    }
+    
 }

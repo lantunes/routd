@@ -44,9 +44,7 @@ public abstract class RouterContractTest<R extends Router> {
     @It("matches the root route") void routeTest1() {
         
         Route r1 = new Route("/");
-        
         router.add(r1);
-        
         assertEquals(r1, router.route("/"));
     }
     
@@ -296,7 +294,7 @@ public abstract class RouterContractTest<R extends Router> {
         
         Route r = new Route("/foo/bar");
         router.add(r);
-        assertEquals(r, router.route("/foo%2Fbar"));
+        assertNull(router.route("/foo%2Fbar"));
     }
     
     @It("handles encoded '/' correctly with named params") void routeTest22() {
@@ -383,5 +381,21 @@ public abstract class RouterContractTest<R extends Router> {
         Route r = new Route("/test(bar)/");
         router.add(r);
         assertEquals(r, router.route("/test(bar)/"));
+    }
+    
+    @It("matches paths that end with '/' that occur within route paths")
+    void routeTest31() {
+        
+        Route r1 = new Route("/hello");
+        Route r2 = new Route("/hello/");
+        Route r3 = new Route("/hello/world");
+        
+        router.add(r1);
+        router.add(r2);
+        router.add(r3);
+        
+        assertEquals(r1, router.route("/hello"));
+        assertEquals(r2, router.route("/hello/"));
+        assertEquals(r3, router.route("/hello/world"));
     }
 }

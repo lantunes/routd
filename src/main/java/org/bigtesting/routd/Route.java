@@ -143,7 +143,9 @@ public class Route {
         
         for (NamedParameterElement pathParam : pathParams) {
             
-            if (pathParam.name().equals(paramName)) return urlDecode(pathTokens[pathParam.index()]);
+            if (pathParam.name().equals(paramName)) {
+                return urlDecodeForPathParams(pathTokens[pathParam.index()]);
+            }
         }
         
         return null;
@@ -169,12 +171,12 @@ public class Route {
         for (int i = 0; i < splatParams.size(); i++) {
             
             SplatParameterElement splatParam = splatParams.get(i);
-            splat[i] = urlDecode(pathTokens[splatParam.index()]);
+            splat[i] = urlDecodeForPathParams(pathTokens[splatParam.index()]);
             
             if (i + 1 == splatParams.size() && endsWithSplat()) {
                 /* this is the last splat param and the route ends with splat */
                 for (int j = splatParam.index() + 1; j < pathTokens.length; j++) {
-                    splat[i] = splat[i] + PATH_ELEMENT_SEPARATOR + urlDecode(pathTokens[j]);
+                    splat[i] = splat[i] + PATH_ELEMENT_SEPARATOR + urlDecodeForPathParams(pathTokens[j]);
                 }
             }
         }
