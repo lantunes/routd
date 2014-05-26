@@ -32,6 +32,14 @@ public class RegexRouter implements Router {
         routes.add(new RegexRoute(route));
     }
     
+    /**
+     * Returns a Route that matches the given URL path.
+     * Note that the path is expected to be an undecoded URL path.
+     * The router will handle any decoding that might be required.
+     * 
+     *  @param path an undecoded URL path
+     *  @return the matching route, or null if none is found
+     */
     public Route route(String path) {
     
         path = RouteHelper.urlDecodeForRouting(path);
