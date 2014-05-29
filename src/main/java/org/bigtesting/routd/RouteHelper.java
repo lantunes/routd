@@ -53,11 +53,15 @@ public class RouteHelper {
             '[',']','(',')','{','}','+','*','^','?','$','.','\\')));
     
     public static String[] getPathElements(String path) {
+        return getPathElements(path, true);
+    }
+    
+    public static String[] getPathElements(String path, boolean ignoreTrailingSeparator) {
         if (path == null) throw new IllegalArgumentException("path cannot be null");
         path = path.trim();
         if (path.length() == 0) throw new IllegalArgumentException("path cannot be empty");
         path = path.startsWith(PATH_ELEMENT_SEPARATOR) ? path.substring(1) : path;        
-        return path.split(PATH_ELEMENT_SEPARATOR);
+        return path.split(PATH_ELEMENT_SEPARATOR, ignoreTrailingSeparator ? 0 : -1);
     }
     
     public static String urlDecodeForPathParams(String s) {

@@ -506,7 +506,7 @@ public class TestRoute {
        
        path = "/hello/";
        assertEquals(1, route.splat(path).length);
-       assertEquals("hello", route.splat(path)[0]);
+       assertEquals("hello/", route.splat(path)[0]);
     }
     
     @Test
@@ -626,6 +626,16 @@ public class TestRoute {
         assertEquals("[0-9]+", elem.regex());
         assertEquals("Tim", route.getNamedParameter("name", path));
         assertEquals("1", route.getNamedParameter("times", path));
+    }
+    
+    @Test
+    public void splat_ReturnsEmptyStringWithEmptyTerminalSplat() {
+        
+        Route route = new Route("/hello/*");
+        
+        String path = "/hello/";
+        assertEquals(1, route.splat(path).length);
+        assertEquals("", route.splat(path)[0]);
     }
     
     @Test

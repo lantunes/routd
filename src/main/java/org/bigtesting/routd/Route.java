@@ -165,7 +165,7 @@ public class Route {
     public String[] splat(String path) {
         
         List<SplatParameterElement> splatParams = getSplatParameterElements();
-        String[] pathTokens = RouteHelper.getPathElements(path);
+        String[] pathTokens = RouteHelper.getPathElements(path, false);
         String[] splat = new String[splatParams.size()];
         
         for (int i = 0; i < splatParams.size(); i++) {
