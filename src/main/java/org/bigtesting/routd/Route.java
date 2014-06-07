@@ -135,6 +135,9 @@ public class Route {
     
     /**
      * Use of this method assumes the path given matches this Route.
+     * 
+     * @return the value of the named parameter in the path, or null if 
+     *         no named parameter exists with the given name
      */
     public String getNamedParameter(String paramName, String path) {
         
@@ -153,10 +156,17 @@ public class Route {
     
     /**
      * Use of this method assumes the path given matches this Route.
+     * 
+     * @return the value of the splat parameter at the given index, 
+     *         or null if the splat parameter index does not exist
      */
     public String getSplatParameter(int index, String path) {
         
-        return splat(path)[index];
+        String[] splat = splat(path);
+        if (index > splat.length - 1) {
+            return null;
+        }
+        return splat[index];
     }
     
     /**

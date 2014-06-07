@@ -697,4 +697,59 @@ public class TestRoute {
         Route route = new Route("/");
         assertFalse(route.hasPathElements());
     }
+    
+    @Test
+    public void getSplatParameter() {
+        
+        Route route = new Route("/customer/*");
+        String path = "/customer/1";
+        
+        assertEquals("1", route.getSplatParameter(0, path));
+    }
+    
+    @Test
+    public void getSplatParameter_HandlesUnicodeCorrectly() {
+        
+        Route route = new Route("/customer/*");
+        String path = "/customer/f%C3%B6%C3%B6";
+        
+        assertEquals("föö", route.getSplatParameter(0, path));
+    }
+    
+    @Test
+    public void getSplatParameter_HandlesEncodedSlashesCorrectly() {
+        
+        Route route = new Route("/*");
+        String path = "/foo%2Fbar";
+        
+        assertEquals("foo/bar", route.getSplatParameter(0, path));
+    }
+    
+    @Test
+    public void getSplatParameter_HandlesEncodedSlashesCorrectlyWhenInterjected() {
+        
+        Route route = new Route("/hello/*/there");
+        String path = "/hello/foo%2Fbar/there";
+        
+        assertEquals("foo/bar", route.getSplatParameter(0, path));
+    }
+    
+    @Test
+    public void getSplatParameter_WithMultipleParameters() {
+        
+        Route route = new Route("/customer/*/named/*");
+        String path = "/customer/1/named/John";
+        
+        assertEquals("1", route.getSplatParameter(0, path));
+        assertEquals("John", route.getSplatParameter(1, path));
+    }
+    
+    @Test
+    public void getSplatParameter_NotFound() {
+        
+        Route route = new Route("/customer/*");
+        String path = "/customer/1";
+        
+        assertNull(route.getSplatParameter(1, path));
+    }
 }
