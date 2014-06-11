@@ -29,7 +29,7 @@ public class TreeRouter implements Router {
 
     private TreeNode root; 
     
-    public void add(Route route) {
+    public synchronized void add(Route route) {
         
         List<PathElement> pathElements = route.getPathElements();
         if (!pathElements.isEmpty() && route.endsWithPathSeparator()) {
