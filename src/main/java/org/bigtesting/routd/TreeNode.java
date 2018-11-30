@@ -109,11 +109,21 @@ public class TreeNode {
         }
         return null;
     }
-    
-    public TreeNode getMatchingChild(String token) {
-        
+
+    public TreeNode getMatchingChild(String token, int remainingTokens) {
+
+        final int childrenSize = children.size();
         for (TreeNode node : children) {
-            if (node.matches(token)) return node;
+            if (node.matches(token)) {
+                if (remainingTokens == 0 && (childrenSize > 1 && node.children.size() != 0)) {
+                    if (node.pathElement.index == 0)
+                        return node;
+
+                    // next!
+                } else {
+                    return node;
+                }
+            }
         }
         return null;
     }

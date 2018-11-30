@@ -72,11 +72,13 @@ public class TreeRouter implements Router {
         if (searchTokens.isEmpty() && root.containsSplatChild() && !root.hasRoute()) {
             return root.getSplatChild().getRoute();
         }
-        
+
+        int remainingTokens = searchTokens.size();
         TreeNode currentMatchingNode = root;
         for (String token : searchTokens) {
+            remainingTokens -= 1;
             
-            TreeNode matchingNode = currentMatchingNode.getMatchingChild(token);
+            TreeNode matchingNode = currentMatchingNode.getMatchingChild(token, remainingTokens);
             if (matchingNode == null) return null;
             currentMatchingNode = matchingNode;
             
