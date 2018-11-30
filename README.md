@@ -15,14 +15,14 @@ Or, add the following dependency to your pom.xml:
 <dependency>
     <groupId>org.bigtesting</groupId>
     <artifactId>routd</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
 </dependency>
 ```
 
 Or, if you are using Gradle:
 ```
 dependencies {
-	compile "org.bigtesting:routd:1.0.5"
+	compile "org.bigtesting:routd:1.0.6"
 }
 ```
 
