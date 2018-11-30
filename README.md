@@ -19,6 +19,13 @@ Or, add the following dependency to your pom.xml:
 </dependency>
 ```
 
+Or, if you are using Gradle:
+```
+dependencies {
+	compile "org.bigtesting:routd:1.0.5"
+}
+```
+
 ## Usage
 -----------
 
