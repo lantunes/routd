@@ -77,10 +77,12 @@ public class TreeRouter implements Router {
         TreeNode currentMatchingNode = root;
         for (String token : searchTokens) {
             remainingTokens -= 1;
-            
-            TreeNode matchingNode = currentMatchingNode.getMatchingChild(token, remainingTokens);
-            if (matchingNode == null) return null;
-            currentMatchingNode = matchingNode;
+
+            List<TreeNode> matchingNodes = currentMatchingNode.getMatchingChildren(token);
+
+            if (matchingNodes.isEmpty()) return null;
+
+            currentMatchingNode = getMatchingNode(matchingNodes, remainingTokens);
             
             if (currentMatchingNode.isSplat() && 
                     !currentMatchingNode.hasChildren()) {
@@ -89,6 +91,19 @@ public class TreeRouter implements Router {
         }
         
         return currentMatchingNode.getRoute();
+    }
+
+    private TreeNode getMatchingNode(List<TreeNode> candidates, int remainingTokens) {
+        /*
+         * if there is more than one candidate and there are no more tokens to process,
+         *   return the first candidate that has a route
+         */
+        if (candidates.size() > 1 && remainingTokens == 0) {
+            for (TreeNode candidate : candidates) {
+                if (candidate.hasRoute()) return candidate;
+            }
+        }
+        return candidates.get(0);
     }
     
     private List<String> getPathAsSearchTokens(String path) {

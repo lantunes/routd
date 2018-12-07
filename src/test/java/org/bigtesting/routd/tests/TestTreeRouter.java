@@ -587,21 +587,4 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertEquals(r6, child.getRoute());
         assertEquals(0, child.getChildren().size());
     }
-
-    @It("produces the correct trees when the routes are added in a non-deterministic way")
-    public void treeTest21() {
-        final Route r1  = new Route("/abc/:param1/:param2/:param4/def/:param5");
-        final Route r2  = new Route("/abc/:param1/:param2/:param3");
-
-        router.add(r1);
-        router.add(r2);
-
-        assertEquals(r2, router.route("/abc/dummy1/dummy2/dummy3"));
-        assertEquals(r1, router.route("/abc/dummy1/dummy2/dummy3/def/dummy4"));
-
-        assertNull(router.route("/abc"));
-        assertNull(router.route("/abc/dummy1"));
-        assertNull(router.route("/abc/dummy1/dummy2"));
-        assertNull(router.route("/abc/dummy1/dummy2/dummy3/def"));
-    }
 }

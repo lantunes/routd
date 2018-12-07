@@ -398,4 +398,37 @@ public abstract class RouterContractTest<R extends Router> {
         assertEquals(r2, router.route("/hello/"));
         assertEquals(r3, router.route("/hello/world"));
     }
+
+    @It("produces the correct trees when the routes are added in a non-deterministic way")
+    public void routeTest32() {
+        final Route r1  = new Route("/abc/:param1/:param2/:param4/def/:param5");
+        final Route r2  = new Route("/abc/:param1/:param2/:param3");
+
+        router.add(r1);
+        router.add(r2);
+
+        assertEquals(r2, router.route("/abc/dummy1/dummy2/dummy3"));
+        assertEquals(r1, router.route("/abc/dummy1/dummy2/dummy3/def/dummy4"));
+
+        assertNull(router.route("/abc"));
+        assertNull(router.route("/abc/dummy1"));
+        assertNull(router.route("/abc/dummy1/dummy2"));
+        assertNull(router.route("/abc/dummy1/dummy2/dummy3/def"));
+    }
+
+    @It("handles paths when there are multiple similar regex routes")
+    public void routeTest33() {
+        Route r1 = new Route("/excavator/imgservlet/:imgid<[0-9]+>");
+        Route r2 = new Route("/excavator/imgservlet/:imgid<[0-9]+>/thumbnail");
+        Route r3 = new Route("/excavator/imgservlet/blank");
+        router.add(r1);
+        router.add(r2);
+        router.add(r3);
+
+        String path = "/excavator/imgservlet/10";
+        Route x = router.route(path);
+        assertNotNull(x);
+        assertEquals(r1, x);
+        assertEquals("10", x.getNamedParameter("imgid", path));
+    }
 }

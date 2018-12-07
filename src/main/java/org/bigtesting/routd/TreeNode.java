@@ -110,22 +110,13 @@ public class TreeNode {
         return null;
     }
 
-    public TreeNode getMatchingChild(String token, int remainingTokens) {
+    public List<TreeNode> getMatchingChildren(String token) {
 
-        final int childrenSize = children.size();
+        List<TreeNode> matchingChildren = new ArrayList<TreeNode>();
         for (TreeNode node : children) {
-            if (node.matches(token)) {
-                if (remainingTokens == 0 && (childrenSize > 1 && node.children.size() != 0)) {
-                    if (node.pathElement.index == 0)
-                        return node;
-
-                    // next!
-                } else {
-                    return node;
-                }
-            }
+            if (node.matches(token)) matchingChildren.add(node);
         }
-        return null;
+        return matchingChildren;
     }
     
     public boolean hasChildren() {
