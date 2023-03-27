@@ -30,8 +30,8 @@ public class PathElementComparator implements Comparator<String> {
         if (r1Elem.equals("")) return -1;
         if (r2Elem.equals("")) return 1;
         
-        if (r1Elem.equals(WILDCARD) && !r2Elem.equals("")) return -1;
-        if (r2Elem.equals(WILDCARD) && !r1Elem.equals("")) return 1;
+        if (r1Elem.equals(WILDCARD) && !r2Elem.equals("")) return 1;
+        if (r2Elem.equals(WILDCARD) && !r1Elem.equals("")) return -1;
         
         if (r1Elem.equals(WILDCARD) && r2Elem.equals("")) return 1;
         if (r2Elem.equals(WILDCARD) && r1Elem.equals("")) return -1;
