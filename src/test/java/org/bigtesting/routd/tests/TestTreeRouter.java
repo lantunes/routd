@@ -437,15 +437,15 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertEquals("^protected$", firstChild.toString());
         assertNull(firstChild.getRoute());
         assertEquals(2, firstChild.getChildren().size());
-        
+
         TreeNode child = firstChild.getChildren().get(0);
-        assertEquals("^(.*)$", child.toString());
-        assertEquals(r1, child.getRoute());
-        assertEquals(0, child.getChildren().size());
-        
-        child = firstChild.getChildren().get(1);
         assertEquals("^([0-9]+)$", child.toString());
         assertEquals(r2, child.getRoute());
+        assertEquals(0, child.getChildren().size());
+
+        child = firstChild.getChildren().get(1);
+        assertEquals("^(.*)$", child.toString());
+        assertEquals(r1, child.getRoute());
         assertEquals(0, child.getChildren().size());
         
         TreeNode secondChild = root.getChildren().get(1);
@@ -454,7 +454,7 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertEquals(0, secondChild.getChildren().size());
         
         assertEquals(r1, router.route("/protected/content"));
-        assertEquals(r1, router.route("/protected/123"));
+        assertEquals(r2, router.route("/protected/123"));
         assertEquals(r3, router.route("/john"));
         assertEquals(r1, router.route("/protected/"));
     }
@@ -511,7 +511,7 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         router.add(r2);
         router.add(r1);
         
-        assertEquals(r1, router.route("/abc/123/def"));
+        assertEquals(r2, router.route("/abc/123/def"));
     }
     
     @It("matches a similar route containing a static element before the " +
@@ -537,7 +537,7 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         router.add(r2);
         router.add(r1);
         
-        assertEquals(r1, router.route("/abc/123/def"));
+        assertEquals(r2, router.route("/abc/123/def"));
     }
     
     @It("produces a tree with multiple routes with children sorted properly")
@@ -561,30 +561,30 @@ public class TestTreeRouter extends RouterContractTest<TreeRouter> {
         assertEquals("^/$", root.toString());
         assertEquals(r1, root.getRoute());
         assertEquals(5, root.getChildren().size());
-        
+
         TreeNode child = root.getChildren().get(0);
-        assertEquals("^(.*)$", child.toString());
-        assertEquals(r2, child.getRoute());
-        assertEquals(0, child.getChildren().size());
-        
-        child = root.getChildren().get(1);
         assertEquals("^1$", child.toString());
         assertEquals(r3, child.getRoute());
         assertEquals(0, child.getChildren().size());
         
-        child = root.getChildren().get(2);
+        child = root.getChildren().get(1);
         assertEquals("^x$", child.toString());
         assertEquals(r4, child.getRoute());
         assertEquals(0, child.getChildren().size());
         
-        child = root.getChildren().get(3);
+        child = root.getChildren().get(2);
         assertEquals("^y$", child.toString());
         assertEquals(r5, child.getRoute());
         assertEquals(0, child.getChildren().size());
         
-        child = root.getChildren().get(4);
+        child = root.getChildren().get(3);
         assertEquals("^([^/]+)$", child.toString());
         assertEquals(r6, child.getRoute());
+        assertEquals(0, child.getChildren().size());
+
+        child = root.getChildren().get(4);
+        assertEquals("^(.*)$", child.toString());
+        assertEquals(r2, child.getRoute());
         assertEquals(0, child.getChildren().size());
     }
 }

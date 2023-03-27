@@ -36,25 +36,25 @@ public class TestRegexRouteComparator {
     public void testRegexRoutesAreSortedCorrectly() {
         
         RegexRoute r1  = new RegexRoute(new Route("/"));
-        RegexRoute r2  = new RegexRoute(new Route("/*"));
-        RegexRoute r3  = new RegexRoute(new Route("/1"));
-        RegexRoute r4  = new RegexRoute(new Route("/a"));
-        RegexRoute r5  = new RegexRoute(new Route("/b"));
-        RegexRoute r6  = new RegexRoute(new Route("/:id"));
+        RegexRoute r2  = new RegexRoute(new Route("/1"));
+        RegexRoute r3  = new RegexRoute(new Route("/a"));
+        RegexRoute r4  = new RegexRoute(new Route("/b"));
+        RegexRoute r5  = new RegexRoute(new Route("/:id"));
+        RegexRoute r6  = new RegexRoute(new Route("/*"));
         RegexRoute r7  = new RegexRoute(new Route("/1/"));
-        RegexRoute r8  = new RegexRoute(new Route("/1/*"));        
-        RegexRoute r9  = new RegexRoute(new Route("/1/2"));
-        RegexRoute r10  = new RegexRoute(new Route("/1/a"));
-        RegexRoute r11  = new RegexRoute(new Route("/1/b"));
-        RegexRoute r12 = new RegexRoute(new Route("/1/:id"));
-        RegexRoute r13 = new RegexRoute(new Route("/1/*/3"));
-        RegexRoute r14 = new RegexRoute(new Route("/1/2/"));
-        RegexRoute r15 = new RegexRoute(new Route("/1/2/*"));
-        RegexRoute r16 = new RegexRoute(new Route("/1/2/3"));
-        RegexRoute r17 = new RegexRoute(new Route("/1/2/:id<[0-9]+>"));
-        RegexRoute r18 = new RegexRoute(new Route("/1/2/:id<[a-b]+>"));
-        RegexRoute r19 = new RegexRoute(new Route("/1/:times/3"));
-        
+        RegexRoute r8  = new RegexRoute(new Route("/1/2"));
+        RegexRoute r9  = new RegexRoute(new Route("/1/a"));
+        RegexRoute r10 = new RegexRoute(new Route("/1/b"));
+        RegexRoute r11 = new RegexRoute(new Route("/1/:id"));
+        RegexRoute r12 = new RegexRoute(new Route("/1/*"));
+        RegexRoute r13 = new RegexRoute(new Route("/1/2/"));
+        RegexRoute r14 = new RegexRoute(new Route("/1/2/3"));
+        RegexRoute r15 = new RegexRoute(new Route("/1/2/:id<[0-9]+>"));
+        RegexRoute r16 = new RegexRoute(new Route("/1/2/:id<[a-b]+>"));
+        RegexRoute r17 = new RegexRoute(new Route("/1/2/*"));
+        RegexRoute r18 = new RegexRoute(new Route("/1/:times/3"));
+        RegexRoute r19 = new RegexRoute(new Route("/1/*/3"));
+
         Set<RegexRoute> routes = new TreeSet<RegexRoute>(new RegexRouteComparator());
         routes.add(r1);
         routes.add(r2);

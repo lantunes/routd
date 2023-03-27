@@ -195,8 +195,8 @@ public abstract class RouterContractTest<R extends Router> {
         assertEquals(r1, router.route("/cntrl"));
         assertEquals(r1, router.route("/actn"));
         assertEquals(r1, router.route("/cntrl/actn"));
-        assertEquals(r1, router.route("/specific"));
-        assertEquals(r1, router.route("/123"));
+        assertEquals(r2, router.route("/specific"));
+        assertEquals(r3, router.route("/123"));
         assertEquals(r1, router.route("/hello/"));
     }
     
@@ -224,7 +224,7 @@ public abstract class RouterContractTest<R extends Router> {
         router.add(r3);
         
         assertEquals(r1, router.route("/protected/content"));
-        assertEquals(r1, router.route("/protected/123"));
+        assertEquals(r2, router.route("/protected/123"));
         assertEquals(r3, router.route("/john"));
         assertEquals(r1, router.route("/protected/"));
     }
@@ -242,7 +242,7 @@ public abstract class RouterContractTest<R extends Router> {
         assertEquals(r1, router.route("/protected/blah/content"));
         assertNull(router.route("/protected/blah/content/"));
         assertNull(router.route("/protected/1/blah/content"));
-        assertEquals(r1, router.route("/protected/user/content"));
+        assertEquals(r2, router.route("/protected/user/content"));
     }
     
     @It("handles paths with splat parameters occurring multiple times") 
